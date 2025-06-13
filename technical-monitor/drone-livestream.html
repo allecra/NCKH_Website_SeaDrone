@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drone Livestream - Beach Management System</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/livestream.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo">Beach Management System</div>
+            <div class="user-info">
+                <span id="currentUser">Technical Monitor</span>
+                <button id="logoutBtn" class="btn btn-small">Logout</button>
+            </div>
+        </header>
+        
+        <nav class="breadcrumb">
+            <a href="dashboard.html">Dashboard</a> &gt; 
+            <a href="drones.html">Manage Drones</a> &gt; 
+            <span id="droneNameDisplay">Drone Name</span> &gt; Livestream
+        </nav>
+        
+        <main class="main-content livestream-container">
+            <div class="content-header">
+                <h1>Drone Livestream: <span id="droneNameTitle">Drone Name</span></h1>
+                <div class="livestream-controls">
+                    <button id="startStreamBtn" class="btn btn-primary">Start Stream</button>
+                    <button id="stopStreamBtn" class="btn btn-danger">Stop Stream</button>
+                </div>
+            </div>
+            
+            <div class="livestream-content">
+                <div class="map-container">
+                    <div id="map"></div>
+                </div>
+                
+                <div class="video-container">
+                    <div class="video-placeholder" id="videoFeed">
+                        <div class="video-placeholder-text">Video Feed</div>
+                    </div>
+                </div>
+                
+                <div class="detection-history">
+                    <h3>Swimmer Detection History</h3>
+                    <div class="detection-list" id="detectionList">
+                        <!-- Detection history will be loaded here -->
+                        <div class="no-detections">No detections yet</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer class="app-footer">
+            <p>&copy; 2025 Beach Management System</p>
+        </footer>
+    </div>
+    <script src="../js/auth.js"></script>
+    <script src="../js/technical-monitor.js"></script>
+    <script src="../js/drone-livestream.js"></script>
+</body>
+</html>

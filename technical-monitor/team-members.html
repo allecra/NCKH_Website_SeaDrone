@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Members - Beach Management System</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo">Beach Management System</div>
+            <div class="user-info">
+                <span id="currentUser">Technical Monitor</span>
+                <button id="logoutBtn" class="btn btn-small">Logout</button>
+            </div>
+        </header>
+        
+        <nav class="breadcrumb">
+            <a href="dashboard.html">Dashboard</a> &gt; Team Members
+        </nav>
+        
+        <main class="main-content">
+            <div class="content-header">
+                <h1>Team Members</h1>
+            </div>
+            
+            <div class="data-table-container">
+                <table class="data-table" id="teamMembersTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Full Name</th>
+                            <th>Role</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Team members data will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+        
+        <footer class="app-footer">
+            <p>&copy; 2025 Beach Management System</p>
+        </footer>
+    </div>
+    <script src="../js/auth.js"></script>
+    <script src="../js/technical-monitor.js"></script>
+    <script src="../js/team-members.js"></script>
+</body>
+</html>

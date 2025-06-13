@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Member Details - Beach Management System</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo">Beach Management System</div>
+            <div class="user-info">
+                <span id="currentUser">Admin</span>
+                <button id="logoutBtn" class="btn btn-small">Logout</button>
+            </div>
+        </header>
+        
+        <nav class="breadcrumb">
+            <a href="dashboard.html">Dashboard</a> &gt; 
+            <a href="beaches.html">Beaches</a> &gt; 
+            <span id="beachNameDisplay">Beach Name</span> &gt; 
+            <a href="teams.html" id="teamsLink">Teams</a> &gt; 
+            <span id="teamNameDisplay">Team Name</span> &gt; 
+            <a href="members.html" id="membersLink">Members</a> &gt; 
+            <span id="memberNameDisplay">Member Name</span>
+        </nav>
+        
+        <main class="main-content">
+            <div class="content-header">
+                <h1>Member Details: <span id="memberNameTitle">Member Name</span></h1>
+                <button id="saveMemberBtn" class="btn btn-primary">Save Changes</button>
+            </div>
+            
+            <div class="member-details-container">
+                <form id="memberDetailsForm">
+                    <input type="hidden" id="memberId">
+                    <div class="form-group">
+                        <label for="fullName">Full Name</label>
+                        <input type="text" id="fullName" name="fullName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone</label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Address</label>
+                        <textarea id="address" name="address" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="role">Role</label>
+                        <select id="role" name="role" required>
+                            <option value="rescuer">Rescuer</option>
+                            <option value="technical_monitor">Technical Monitor</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+        </main>
+        
+        <footer class="app-footer">
+            <p>&copy; 2025 Beach Management System</p>
+        </footer>
+    </div>
+    <script src="../js/auth.js"></script>
+    <script src="../js/admin.js"></script>
+    <script src="../js/member-details.js"></script>
+</body>
+</html>

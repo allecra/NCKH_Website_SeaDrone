@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Surveys - Beach Management System</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo">Beach Management System</div>
+            <div class="user-info">
+                <span id="currentUser">Technical Monitor</span>
+                <button id="logoutBtn" class="btn btn-small">Logout</button>
+            </div>
+        </header>
+        
+        <nav class="breadcrumb">
+            <a href="dashboard.html">Dashboard</a> &gt; Manage Surveys
+        </nav>
+        
+        <main class="main-content">
+            <div class="content-header">
+                <h1>Manage Surveys</h1>
+                <button id="addSurveyBtn" class="btn btn-primary">Add Survey</button>
+            </div>
+            
+            <div class="data-table-container">
+                <table class="data-table" id="surveysTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Survey Name</th>
+                            <th>Date Created</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Survey data will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+        
+        <!-- Add/Edit Survey Modal -->
+        <div id="surveyModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <h2 id="modalTitle">Add Survey</h2>
+                <form id="surveyForm">
+                    <input type="hidden" id="surveyId">
+                    <div class="form-group">
+                        <label for="surveyName">Survey Name</label>
+                        <input type="text" id="surveyName" name="surveyName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="surveyDescription">Description</label>
+                        <textarea id="surveyDescription" name="surveyDescription" required></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelSurveyBtn">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Delete Confirmation Modal -->
+        <div id="deleteModal" class="modal">
+            <div class="modal-content">
+                <h2>Confirm Delete</h2>
+                <p>Are you sure you want to delete this survey? This action cannot be undone.</p>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelDeleteBtn">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+                </div>
+            </div>
+        </div>
+        
+        <footer class="app-footer">
+            <p>&copy; 2025 Beach Management System</p>
+        </footer>
+    </div>
+    <script src="../js/auth.js"></script>
+    <script src="../js/technical-monitor.js"></script>
+    <script src="../js/surveys.js"></script>
+</body>
+</html>

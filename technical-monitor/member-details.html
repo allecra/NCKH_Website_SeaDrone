@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Member Details - Beach Management System</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo">Beach Management System</div>
+            <div class="user-info">
+                <span id="currentUser">Technical Monitor</span>
+                <button id="logoutBtn" class="btn btn-small">Logout</button>
+            </div>
+        </header>
+        
+        <nav class="breadcrumb">
+            <a href="dashboard.html">Dashboard</a> &gt; 
+            <a href="team-members.html">Team Members</a> &gt; 
+            <span id="memberNameDisplay">Member Name</span>
+        </nav>
+        
+        <main class="main-content">
+            <div class="content-header">
+                <h1>Member Details: <span id="memberNameTitle">Member Name</span></h1>
+            </div>
+            
+            <div class="member-details-container readonly">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <div class="readonly-value" id="fullName"></div>
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    <div class="readonly-value" id="phone"></div>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <div class="readonly-value" id="email"></div>
+                </div>
+                <div class="form-group">
+                    <label>Address</label>
+                    <div class="readonly-value" id="address"></div>
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <div class="readonly-value" id="role"></div>
+                </div>
+            </div>
+        </main>
+        
+        <footer class="app-footer">
+            <p>&copy; 2025 Beach Management System</p>
+        </footer>
+    </div>
+    <script src="../js/auth.js"></script>
+    <script src="../js/technical-monitor.js"></script>
+    <script src="../js/view-member-details.js"></script>
+</body>
+</html>

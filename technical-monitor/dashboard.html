@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technical Monitor Dashboard - Beach Management System</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo">Beach Management System</div>
+            <div class="user-info">
+                <span id="currentUser">Technical Monitor</span>
+                <button id="logoutBtn" class="btn btn-small">Logout</button>
+            </div>
+        </header>
+        
+        <main class="main-content">
+            <h1>Technical Monitor Dashboard</h1>
+            <div class="dashboard-cards">
+                <div class="card" onclick="location.href='team-members.html'">
+                    <div class="card-icon">👥</div>
+                    <h2>Team Members</h2>
+                    <p>View team members information</p>
+                </div>
+                <div class="card" onclick="location.href='drones.html'">
+                    <div class="card-icon">🚁</div>
+                    <h2>Manage Drones</h2>
+                    <p>Add, edit, and monitor drones</p>
+                </div>
+                <div class="card" onclick="location.href='surveys.html'">
+                    <div class="card-icon">📋</div>
+                    <h2>Manage Surveys</h2>
+                    <p>Create and manage surveys</p>
+                </div>
+            </div>
+        </main>
+        
+        <footer class="app-footer">
+            <p>&copy; 2025 Beach Management System</p>
+        </footer>
+    </div>
+    <script src="../js/auth.js"></script>
+    <script src="../js/technical-monitor.js"></script>
+</body>
+</html>
