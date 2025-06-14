@@ -8,7 +8,12 @@ document.addEventListener("DOMContentLoaded", () => {
       e.preventDefault();
       const username = document.getElementById('username').value;
       const password = document.getElementById('password').value;
-      // ... các trường khác nếu có
+
+      // Nếu là tài khoản tester thì chuyển hướng sang web API cổng 5008
+      if (username === 'tester' && password === 'test123') {
+        window.location.href = 'http://localhost:5008';
+        return;
+      }
 
       const res = await fetch("http://localhost:3009/api/auth/login", {
         method: "POST",
@@ -66,13 +71,5 @@ function checkAuth() {
   } else if (userRole === "technical_monitor" && currentPath.includes("/admin/")) {
     window.location.href = "../technical-monitor/dashboard.html"
     return false
-  
   }
-
-  return true
-}
-
-if (username === 'tester' && password === 'test123') {
-    window.location.href = 'http://localhost:5008'; // Địa chỉ web API
-    return;
 }
