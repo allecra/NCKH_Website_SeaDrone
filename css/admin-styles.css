@@ -2,7 +2,7 @@
 :root {
   --primary-color: #2563eb;
   --secondary-color: #1e40af;
-  --background-color: #f1f5f9;
+  --background-color: #122d49;
   --card-background: #ffffff;
   --text-primary: #1e293b;
   --text-secondary: #64748b;
@@ -29,6 +29,7 @@ body {
   display: grid;
   grid-template-columns: var(--sidebar-width) 1fr;
   min-height: 100vh;
+  background: var(--background-color);
 }
 
 /* Sidebar */

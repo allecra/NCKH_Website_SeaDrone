@@ -113,7 +113,11 @@
                             <h2>Danh sách bãi biển</h2>
                             <p>Quản lý thông tin các bãi biển</p>
                         </div>
-                        <button class="btn btn-primary" id="addBeachBtn"><i class="fas fa-plus"></i> Thêm bãi biển</button>
+                        <div style="display: flex; gap: 1rem; align-items: center;">
+                            
+                            <button class="btn btn-primary" id="addBeachBtn"><i class="fas fa-plus"></i> Thêm bãi biển</button>
+                            
+                        </div>
                     </div>
                     <div class="beach-list" style="display: flex; flex-wrap: wrap; gap: 1rem;">
                         <!-- Danh sách bãi biển sẽ được thêm vào đây -->
@@ -306,6 +310,16 @@ document.addEventListener('DOMContentLoaded', () => {
             <p>Bạn có chắc chắn muốn xóa bãi biển này?</p>
             <button class="btn btn-danger" id="confirmDeleteBeachBtn">Xóa</button>
             <button class="btn" onclick="closeModal('deleteBeachModal')">Hủy</button>
+        </div>
+    </div>
+    <!-- Modal Báo cáo -->
+    <div id="reportModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('reportModal')">&times;</span>
+            <h2>Báo cáo thống kê</h2>
+            <div id="reportContent">
+                <!-- Nội dung thống kê sẽ được render ở đây -->
+            </div>
         </div>
     </div>
 </body>
