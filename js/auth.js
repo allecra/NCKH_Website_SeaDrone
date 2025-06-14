@@ -2,29 +2,26 @@
 
 // Handle login form submission
 document.addEventListener("DOMContentLoaded", () => {
-  const loginForm = document.getElementById("loginForm")
-
+  const loginForm = document.getElementById("loginForm");
   if (loginForm) {
-    loginForm.addEventListener("submit", (e) => {
-      e.preventDefault()
+    loginForm.onsubmit = async function(e) {
+      e.preventDefault();
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value;
+      // ... các trường khác nếu có
 
-      const accountType = document.getElementById("accountType").value
-      const username = document.getElementById("username").value
-      const password = document.getElementById("password").value
-
-      // Simple authentication check
-      if (accountType === "admin" && username === "admin" && password === "admin123") {
-        localStorage.setItem("currentUser", username)
-        localStorage.setItem("userRole", "admin")
-        window.location.href = "admin/admin-dashboard.html"
-      } else if (accountType === "monitor" && username === "team_nt_alpha" && password === "team123") {
-        localStorage.setItem("currentUser", username)
-        localStorage.setItem("userRole", "technical_monitor")
-        window.location.href = "technical-monitor/dashboard.html"
+      const res = await fetch("http://localhost:3009/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        window.location.href = "../admin/admin-dashboard.html";
       } else {
-        alert("Tên đăng nhập hoặc mật khẩu không đúng!")
+        alert(data.message || "Đăng nhập thất bại!");
       }
-    })
+    };
   }
 
   // Handle logout cho cả class logout-btn
@@ -64,12 +61,12 @@ function checkAuth() {
   // Check if user is on the correct dashboard based on role
   const currentPath = window.location.pathname
   if (userRole === "admin" && currentPath.includes("/technical-monitor/")) {
-    window.location.href = "/admin/admin-dashboard.html"
+    window.location.href = "../admin/admin-dashboard.html"
     return false
   } else if (userRole === "technical_monitor" && currentPath.includes("/admin/")) {
-    window.location.href = "/technical-monitor/dashboard.html"
+    window.location.href = "../technical-monitor/dashboard.html"
     return false
   }
 
   return true
-} 
+}

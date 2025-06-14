@@ -134,6 +134,19 @@ app.get('/api/test-mongo', async (req, res) => {
     }
 });
 
+app.post('/api/auth/login', (req, res) => {
+    const { username, password, accountType } = req.body;
+    // Ví dụ tài khoản cứng
+    if (
+        (username === 'admin' && password === 'admin123') ||
+        (username === 'team_nt_alpha' && password === 'team123')
+    ) {
+        // Lưu role vào localStorage ở FE nếu muốn
+        return res.json({ success: true, message: 'Đăng nhập thành công!', username, role: accountType });
+    }
+    res.status(401).json({ success: false, message: 'Sai thông tin đăng nhập!' });
+});
+
 const PORT = 3009;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
