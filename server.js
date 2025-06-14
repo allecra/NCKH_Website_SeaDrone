@@ -35,10 +35,12 @@ const TeamSchema = new mongoose.Schema({
 const UserSchema = new mongoose.Schema({
     user_id: String,
     team_id: String,
-    name: String,
+    fullname: String, // <-- Đúng là fullname
     role: String,
     phone: String,
     email: String,
+    address: String,
+    avatar: String,
     status: String
 });
 
@@ -92,17 +94,23 @@ app.delete('/api/Team/:id', async (req, res) => {
 
 // API cho User
 app.get('/api/User', async (req, res) => {
-    const Users = await User.find();
-    res.json(Users);
+    const { team_id } = req.query;
+    let users;
+    if (team_id) {
+        users = await User.find({ team_id });
+    } else {
+        users = await User.find();
+    }
+    res.json(users);
 });
 app.post('/api/User', async (req, res) => {
-    const User = new User(req.body);
-    await User.save();
-    res.json(User);
+    const user = new User(req.body);
+    await user.save();
+    res.json(user);
 });
 app.put('/api/User/:id', async (req, res) => {
-    const User = await User.findOneAndUpdate({ User_id: req.params.id }, req.body, { new: true });
-    res.json(User);
+    const user = await User.findOneAndUpdate({ user_id: req.params.id }, req.body, { new: true });
+    res.json(user); // Trả về user đã sửa
 });
 app.delete('/api/User/:id', async (req, res) => {
     await User.deleteOne({ User_id: req.params.id });
@@ -129,4 +137,28 @@ app.get('/api/test-mongo', async (req, res) => {
 const PORT = 3009;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
+});
+
+// Thêm mới
+await fetch('http://localhost:3009/api/User', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+        user_id: 'U' + Date.now(),
+        team_id: teamId,
+        fullname: name, // <-- fullname
+        role,
+        phone,
+        email,
+        address: '', // nếu có
+        avatar: '', // nếu có
+        status: 'active'
+    })
+});
+
+// Sửa
+await fetch(`http://localhost:3009/api/User/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ fullname: name, role, phone, email, status: 'active' })
 });
