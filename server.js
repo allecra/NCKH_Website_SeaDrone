@@ -139,26 +139,3 @@ app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
-// Thêm mới
-await fetch('http://localhost:3009/api/User', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-        user_id: 'U' + Date.now(),
-        team_id: teamId,
-        fullname: name, // <-- fullname
-        role,
-        phone,
-        email,
-        address: '', // nếu có
-        avatar: '', // nếu có
-        status: 'active'
-    })
-});
-
-// Sửa
-await fetch(`http://localhost:3009/api/User/${id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ fullname: name, role, phone, email, status: 'active' })
-});
