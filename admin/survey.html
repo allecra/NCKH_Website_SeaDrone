@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Survey - Hệ thống Cứu hộ Biển</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .app-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .app-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo::before {
+            content: "🚁";
+            font-size: 2rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .breadcrumb {
+            padding: 1rem 2rem;
+            background: rgba(30, 60, 114, 0.05);
+            border-bottom: 1px solid rgba(30, 60, 114, 0.1);
+        }
+
+        .breadcrumb a {
+            color: #1e3c72;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .main-content {
+            padding: 2rem;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(30, 60, 114, 0.1);
+        }
+
+        .content-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e3c72;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .content-header h1::before {
+            content: "📊";
+            font-size: 2.5rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(30, 60, 114, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1e3c72;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(30, 60, 114, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .filter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .filter-header h3 {
+            color: #1e3c72;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-header h3::before {
+            content: "🔍";
+        }
+
+        .filter-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            align-items: end;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 0.75rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .data-table-container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(30, 60, 114, 0.1);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-bottom: 1px solid rgba(30, 60, 114, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-header h3 {
+            color: #1e3c72;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .table-header h3::before {
+            content: "📋";
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            background: #1e3c72;
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e1e5e9;
+            vertical-align: middle;
+        }
+
+        .data-table tbody tr:hover {
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 2px solid #e1e5e9;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+            transform: translateY(-1px);
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #51cf66 0%, #40c057 100%);
+            color: white;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-active {
+            background: rgba(81, 207, 102, 0.1);
+            color: #40c057;
+            border: 1px solid rgba(81, 207, 102, 0.3);
+        }
+
+        .status-completed {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .status-pending {
+            background: rgba(255, 193, 7, 0.1);
+            color: #fd7e14;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 16px;
+            max-width: 600px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            transition: color 0.3s ease;
+        }
+
+        .close-modal:hover {
+            color: #333;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+
+        .app-footer {
+            background: #1e3c72;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            margin-top: auto;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            max-width: 300px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .search-box::before {
+            content: "🔍";
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .content-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+            
+            .filter-controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .data-table-container {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo">Hệ thống Cứu hộ Biển</div>
+            <div class="user-info">
+                <span id="currentUser">Đội trưởng Cứu hộ</span>
+                <button id="logoutBtn" class="btn btn-small btn-secondary">Đăng xuất</button>
+            </div>
+        </header>
+        
+        <nav class="breadcrumb">
+            <a href="dashboard.html">Bảng điều khiển</a> &gt; Quản lý Survey
+        </nav>
+        
+        <main class="main-content">
+            <div class="content-header">
+                <h1>Quản lý Survey</h1>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">24</div>
+                    <div class="stat-label">Survey hôm nay</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">156</div>
+                    <div class="stat-label">Survey tuần này</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">642</div>
+                    <div class="stat-label">Survey tháng này</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">2,847</div>
+                    <div class="stat-label">Tổng survey năm nay</div>
+                </div>
+            </div>
+
+            <!-- Filter Section -->
+            <div class="filter-section">
+                <div class="filter-header">
+                    <h3>Bộ lọc và Tìm kiếm</h3>
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="Tìm kiếm survey...">
+                    </div>
+                </div>
+                <div class="filter-controls">
+                    <div class="form-group">
+                        <label for="timeFilter">Thời gian</label>
+                        <select id="timeFilter">
+                            <option value="today">Hôm nay</option>
+                            <option value="week">Tuần này</option>
+                            <option value="month">Tháng này</option>
+                            <option value="year">Năm này</option>
+                            <option value="custom">Tùy chỉnh</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="statusFilter">Trạng thái</label>
+                        <select id="statusFilter">
+                            <option value="all">Tất cả</option>
+                            <option value="active">Đang tiến hành</option>
+                            <option value="completed">Hoàn thành</option>
+                            <option value="pending">Chờ xử lý</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="areaFilter">Khu vực</label>
+                        <select id="areaFilter">
+                            <option value="all">Tất cả khu vực</option>
+                            <option value="north">Bãi biển phía Bắc</option>
+                            <option value="south">Bãi biển phía Nam</option>
+                            <option value="center">Trung tâm</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button class="btn btn-primary">Áp dụng bộ lọc</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Data Table -->
+            <div class="data-table-container">
+                <div class="table-header">
+                    <h3>Danh sách Survey</h3>
+                    <button class="btn btn-secondary btn-small">📊 Xuất báo cáo</button>
+                </div>
+                <table class="data-table" id="surveysTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Tên Survey</th>
+                            <th>Khu vực</th>
+                            <th>Thời gian</th>
+                            <th>Trạng thái</th>
+                            <th>Người thực hiện</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>#SV001</td>
+                            <td>Khảo sát an toàn bãi biển sáng</td>
+                            <td>Bãi biển phía Bắc</td>
+                            <td>16/06/2025 08:00</td>
+                            <td><span class="status-badge status-completed">Hoàn thành</span></td>
+                            <td>Nguyễn Văn A</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-small btn-secondary">👁️ Xem chi tiết</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>#SV002</td>
+                            <td>Kiểm tra thiết bị cứu hộ</td>
+                            <td>Trung tâm</td>
+                            <td>16/06/2025 14:30</td>
+                            <td><span class="status-badge status-active">Đang tiến hành</span></td>
+                            <td>Trần Thị B</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-small btn-secondary">👁️ Xem chi tiết</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>#SV003</td>
+                            <td>Đánh giá mức độ đông đúc</td>
+                            <td>Bãi biển phía Nam</td>
+                            <td>16/06/2025 16:00</td>
+                            <td><span class="status-badge status-pending">Chờ xử lý</span></td>
+                            <td>Lê Văn C</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-small btn-secondary">👁️ Xem chi tiết</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+        
+        <!-- Add/Edit Survey Modal -->
+        <div id="surveyModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <h2 id="modalTitle">Thêm Survey Mới</h2>
+                <form id="surveyForm">
+                    <input type="hidden" id="surveyId">
+                    <div class="form-group">
+                        <label for="surveyName">Tên Survey</label>
+                        <input type="text" id="surveyName" name="surveyName" required placeholder="Nhập tên survey...">
+                    </div>
+                    <div class="form-group">
+                        <label for="surveyArea">Khu vực</label>
+                        <select id="surveyArea" name="surveyArea" required>
+                            <option value="">Chọn khu vực</option>
+                            <option value="north">Bãi biển phía Bắc</option>
+                            <option value="south">Bãi biển phía Nam</option>
+                            <option value="center">Trung tâm</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="surveyTime">Thời gian thực hiện</label>
+                        <input type="datetime-local" id="surveyTime" name="surveyTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="surveyStatus">Trạng thái</label>
+                        <select id="surveyStatus" name="surveyStatus" required>
+                            <option value="pending">Chờ xử lý</option>
+                            <option value="active">Đang tiến hành</option>
+                            <option value="completed">Hoàn thành</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="assignedTo">Người thực hiện</label>
+                        <input type="text" id="assignedTo" name="assignedTo" required placeholder="Nhập tên người thực hiện...">
+                    </div>
+                    <div class="form-group">
+                        <label for="surveyDescription">Mô tả</label>
+                        <textarea id="surveyDescription" name="surveyDescription" rows="4" placeholder="Nhập mô tả chi tiết về survey..." style="resize: vertical; padding: 0.75rem; border: 2px solid #e1e5e9; border-radius: 8px; font-family: inherit;"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelSurveyBtn">Hủy</button>
+                        <button type="submit" class="btn btn-primary">💾 Lưu Survey</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Delete Confirmation Modal -->
+        <div id="deleteModal" class="modal">
+            <div class="modal-content">
+                <h2>⚠️ Xác nhận xóa</h2>
+                <p>Bạn có chắc chắn muốn xóa survey này? Hành động này không thể hoàn tác.</p>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelDeleteBtn">Hủy</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">🗑️ Xóa</button>
+                </div>
+            </div>
+        </div>
+        
+        <footer class="app-footer">
+            <p>&copy; 2025 Hệ thống Cứu hộ Biển - Đảm bảo an toàn cho mọi người</p>
+        </footer>
+    </div>
+
+    <script>
+        // Modal functionality
+        const surveyModal = document.getElementById('surveyModal');
+        const deleteModal = document.getElementById('deleteModal');
+        const addSurveyBtn = document.getElementById('addSurveyBtn');
+        const closeBtns = document.querySelectorAll('.close-modal');
+        const cancelSurveyBtn = document.getElementById('cancelSurveyBtn');
+        const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+
+        // Open add survey modal
+        addSurveyBtn.addEventListener('click', () => {
+            document.getElementById('modalTitle').textContent = 'Thêm Survey Mới';
+            document.getElementById('surveyForm').reset();
+            document.getElementById('surveyId').value = '';
+            surveyModal.style.display = 'block';
+        });
+
+        // Close modals
+        closeBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.target.closest('.modal').style.display = 'none';
+            });
+        });
+
+        cancelSurveyBtn.addEventListener('click', () => {
+            surveyModal.style.display = 'none';
+        });
+
+        cancelDeleteBtn.addEventListener('click', () => {
+            deleteModal.style.display = 'none';
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) {
+                e.target.style.display = 'none';
+            }
+        });
+
+        // Handle form submission
+        document.getElementById('surveyForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Here you would typically send the data to your backend
+            const formData = new FormData(e.target);
+            const surveyData = Object.fromEntries(formData);
+            
+            console.log('Survey data:', surveyData);
+            
+            // Close modal and show success message
+            surveyModal.style.display = 'none';
+            alert('Survey đã được lưu thành công!');
+        });
+
+        // Handle edit buttons
+        document.querySelectorAll('.data-table .btn-primary').forEach(btn => {
+            if (btn.textContent.includes('Sửa')) {
+                btn.addEventListener('click', (e) => {
+                    const row = e.target.closest('tr');
+                    const cells = row.querySelectorAll('td');
+                    
+                    document.getElementById('modalTitle').textContent = 'Chỉnh sửa Survey';
+                    document.getElementById('surveyId').value = cells[0].textContent;
+                    document.getElementById('surveyName').value = cells[1].textContent;
+                    // Populate other fields as needed
+                    
+                    surveyModal.style.display = 'block';
+                });
+            }
+        });
+
+        // Handle delete buttons
+        document.querySelectorAll('.data-table .btn-danger').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const row = e.target.closest('tr');
+                const surveyName = row.querySelector('td:nth-child(2)').textContent;
+                
+                // Store the row reference for deletion
+                deleteModal.dataset.targetRow = row.rowIndex;
+                deleteModal.style.display = 'block';
+            });
+        });
+
+        // Handle confirm delete
+        document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
+            const rowIndex = deleteModal.dataset.targetRow;
+            if (rowIndex) {
+                // Here you would typically send delete request to backend
+                console.log('Deleting survey at row:', rowIndex);
+                
+                // Remove row from table (in real app, refresh data from server)
+                document.querySelector(`#surveysTable tbody tr:nth-child(${rowIndex})`).remove();
+                
+                deleteModal.style.display = 'none';
+                alert('Survey đã được xóa thành công!');
+            }
+        });
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('#surveysTable tbody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+
+        // Filter functionality
+        document.querySelector('.filter-controls .btn-primary').addEventListener('click', () => {
+            const timeFilter = document.getElementById('timeFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            const areaFilter = document.getElementById('areaFilter').value;
+            
+            console.log('Applying filters:', {
+                time: timeFilter,
+                status: statusFilter,
+                area: areaFilter
+            });
+        });
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            // Here you would typically clear session data and redirect to login page
+            alert('Đã đăng xuất thành công!');
+            window.location.href = 'login.html'; // Redirect to login page
+        });
+    </script>
