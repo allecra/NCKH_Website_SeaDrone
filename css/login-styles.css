@@ -23,7 +23,8 @@
 
 body {
   font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+  background: url('https://static.vecteezy.com/system/resources/previews/027/809/202/large_2x/beautiful-tropical-empty-beach-sea-ocean-with-white-clouds-on-blue-sky-background-free-photo.jpeg') no-repeat center center fixed;
+  background-size: cover;
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -37,11 +38,13 @@ body {
 }
 
 .login-card {
-  background: var(--bg-secondary);
+  background: rgba(255, 255, 255, 0.7); /* Nền trắng mờ */
   border-radius: var(--border-radius);
   box-shadow: var(--shadow);
   padding: 3rem;
   text-align: center;
+  backdrop-filter: blur(8px); /* Làm mờ nền phía sau */
+  -webkit-backdrop-filter: blur(8px); /* Hỗ trợ Safari */
 }
 
 .login-header {
