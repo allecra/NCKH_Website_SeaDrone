@@ -4,4 +4,9 @@ python-multipart==0.0.6
 ultralytics==8.0.196
 pillow==10.0.0
 python-jose==3.3.0
-python-dotenv==1.0.0 
+python-dotenv==1.0.0
+flask==2.0.1
+flask-cors==3.0.10
+opencv-python==4.5.3.56
+torch==1.9.0
+pymongo==4.3.3 

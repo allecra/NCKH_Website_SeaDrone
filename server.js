@@ -45,4 +45,3 @@ const UserSchema = new mongoose.Schema({
 const Beach = mongoose.model('Beach', BeachSchema, 'Beach');
 const Team = mongoose.model('Team', TeamSchema, 'Team');
 const User = mongoose.model('User', UserSchema, 'User');
-
