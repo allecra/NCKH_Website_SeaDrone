@@ -14,7 +14,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background: linear-gradient(135deg, #01125d 0%, #1852a3 50%, #65e68a 100%);
             background-size: 400% 400%;
             animation: gradientShift 15s ease infinite;
             min-height: 100vh;
@@ -63,7 +63,7 @@
 
         .header h1 {
             font-size: 3rem;
-            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb, #f5576c);
+            background: linear-gradient(45deg, #001057, #4065ca);
             background-size: 400% 400%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -609,12 +609,7 @@
                     <option value="cancelled">Đã hủy</option>
                 </select>
                 
-                <select id="teamFilter" class="filter-select" onchange="filterSurveys()">
-                    <option value="">Tất cả đội</option>
-                    <option value="team1">Đội Alpha</option>
-                    <option value="team2">Đội Beta</option>
-                    <option value="team3">Đội Gamma</option>
-                </select>
+                <input type="text" id="teamNameFilter" class="filter-select" placeholder="Tìm theo tên đội..." oninput="filterSurveys()" style="min-width:180px;">
                 
                 <button onclick="createSurvey()" class="btn btn-primary">
                     ➕ Thêm Báo cáo
@@ -634,7 +629,7 @@
             </div>
             <div class="stat-card">
                 <div class="stat-number completed" id="completedCount">28</div>
-                <div class="stat-label">Hoàn thành</div>
+                <div class="stat-label">Hoàn thành</div>    
             </div>
             <div class="stat-card">
                 <div class="stat-number cancelled" id="cancelledCount">3</div>
@@ -676,10 +671,7 @@
                     <label for="beachId">Khu vực khảo sát:</label>
                     <select id="beachId" name="beachId" required>
                         <option value="">Chọn khu vực</option>
-                        <option value="beach1">Bãi biển Nha Trang</option>
-                        <option value="beach2">Bãi biển Đà Nẵng</option>
-                        <option value="beach3">Bãi biển Vũng Tàu</option>
-                        <option value="beach4">Bãi biển Hạ Long</option>
+                        
                     </select>
                 </div>
                 
@@ -687,9 +679,7 @@
                     <label for="teamId">Đội thực hiện:</label>
                     <select id="teamId" name="teamId" required>
                         <option value="">Chọn đội</option>
-                        <option value="team1">Đội Alpha - Trưởng: Nguyễn Văn A</option>
-                        <option value="team2">Đội Beta - Trưởng: Trần Thị B</option>
-                        <option value="team3">Đội Gamma - Trưởng: Lê Văn C</option>
+                      
                     </select>
                 </div>
                 
@@ -739,188 +729,113 @@
     <!-- Toast notification -->
     <div id="toast" class="toast"></div>
 
+    <!-- Thêm modal xem chi tiết survey -->
+    <div id="viewSurveyModal" class="modal">
+        <div class="modal-content" style="display: flex; gap: 32px; max-width: 900px;">
+            <span class="close" onclick="closeViewModal()">&times;</span>
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
+                <div id="viewSurveyImage" style="margin-bottom: 16px;"></div>
+                <div id="viewDetectionResults"></div>
+            </div>
+            <div style="flex: 1; overflow-x: auto;">
+                <h3>Chi tiết JSON</h3>
+                <pre id="viewSurveyJson" style="background:#f8f8f8; border-radius:8px; padding:12px; max-height:500px; overflow:auto;"></pre>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Sample data
-        let surveys = [
-            {
-                id: 'SV001',
-                name: 'Khảo sát khu vực Nha Trang - Tuần 1',
-                beachId: 'beach1',
-                beachName: 'Bãi biển Nha Trang',
-                teamId: 'team1',
-                teamName: 'Đội Alpha',
-                status: 'active',
-                scheduledTime: '2025-06-20T09:00',
-                assignedTo: 'Nguyễn Văn A',
-                priority: 'high',
-                description: 'Khảo sát tình hình an toàn khu vực bãi biển Nha Trang, kiểm tra các điểm nguy hiểm và đánh giá mức độ rủi ro.',
-                createdAt: '2025-06-15T10:30'
-            },
-            {
-                id: 'SV002',
-                name: 'Kiểm tra hệ thống cứu hộ Đà Nẵng',
-                beachId: 'beach2',
-                beachName: 'Bãi biển Đà Nẵng',
-                teamId: 'team2',
-                teamName: 'Đội Beta',
-                status: 'completed',
-                scheduledTime: '2025-06-18T14:00',
-                assignedTo: 'Trần Thị B',
-                priority: 'medium',
-                description: 'Kiểm tra và đánh giá hiệu quả của hệ thống cứu hộ hiện tại tại khu vực bãi biển Đà Nẵng.',
-                createdAt: '2025-06-14T08:15'
-            },
-            {
-                id: 'SV003',
-                name: 'Khảo sát nguy cơ sóng lớn Vũng Tàu',
-                beachId: 'beach3',
-                beachName: 'Bãi biển Vũng Tàu',
-                teamId: 'team3',
-                teamName: 'Đội Gamma',
-                status: 'pending',
-                scheduledTime: '2025-06-25T07:30',
-                assignedTo: 'Lê Văn C',
-                priority: 'urgent',
-                description: 'Đánh giá nguy cơ sóng lớn trong mùa mưa bão và đề xuất các biện pháp phòng ngừa.',
-                createdAt: '2025-06-16T16:45'
+        let surveys = [];
+        let filteredSurveys = [];
+        let editingSurvey = null;
+
+        // Hàm lấy dữ liệu khảo sát từ backend (giờ là Survey_Drone)
+        async function fetchSurveys() {
+            try {
+                const res = await fetch('http://localhost:3005/api/Survey_Drone');
+                const data = await res.json();
+                console.log('Survey_Drone API response:', data);
+                surveys = Array.isArray(data.data) ? data.data : (Array.isArray(data) ? data : []);
+                filteredSurveys = [...surveys];
+                renderSurveys();
+                updateStats();
+            } catch (err) {
+                showToast('Không thể tải dữ liệu khảo sát!', 'error');
             }
-        ];
+        }
 
-        let filteredSurveys = [...surveys];
-        let editingId = null;
+        // Hàm lấy dữ liệu Survey_Drone (nếu cần)
+        async function fetchSurveyDrones() {
+            try {
+                const res = await fetch('http://localhost:3005/api/Survey_Drone');
+                const data = await res.json();
+                // Xử lý data ở đây nếu cần liên kết với surveys
+                // Ví dụ: lưu vào biến toàn cục hoặc merge vào surveys
+            } catch (err) {
+                showToast('Không thể tải dữ liệu Survey_Drone!', 'error');
+            }
+        }
 
-        // Initialize
+        // Gọi fetch khi trang load
         document.addEventListener('DOMContentLoaded', function() {
-            renderSurveys();
-            updateStats();
+            fetchSurveys();
+             fetchSurveyDrones(); // Nếu cần dùng
         });
 
-        // Render surveys
+        // Hàm render danh sách khảo sát (theo Survey_Drone)
         function renderSurveys() {
             const surveyList = document.getElementById('surveyList');
-            
             if (filteredSurveys.length === 0) {
-                surveyList.innerHTML = `
-                    <div class="empty-state">
-                        <svg viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                        </svg>
-                        <h3>Không tìm thấy báo cáo khảo sát</h3>
-                        <p>Thử thay đổi bộ lọc hoặc thêm báo cáo khảo sát mới</p>
-                    </div>
-                `;
+                surveyList.innerHTML = `<div class="empty-state"><h3>Không tìm thấy báo cáo khảo sát</h3></div>`;
                 return;
             }
-
             surveyList.innerHTML = filteredSurveys.map(survey => `
                 <div class="survey-card">
                     <div class="survey-header">
                         <div>
-                            <div class="survey-title">${survey.name}</div>
-                            <div class="survey-id">ID: ${survey.id}</div>
+                            <div class="survey-title">Survey ID: ${survey.survey_id}</div>
+                            <div class="survey-id">Drone ID: ${survey.drone_id}</div>
                         </div>
-                        <span class="status-badge status-${survey.status}">
-                            ${getStatusText(survey.status)}
-                        </span>
+                        <span class="status-badge">${survey.timestamp ? formatDateTime(survey.timestamp) : ''}</span>
                     </div>
-                    
                     <div class="survey-info">
-                        <div class="info-item">
-                            <span class="info-icon">🏖️</span>
-                            <span class="info-label">Khu vực:</span>
-                            <span class="info-value">${survey.beachName}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-icon">👥</span>
-                            <span class="info-label">Đội:</span>
-                            <span class="info-value">${survey.teamName}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-icon">👤</span>
-                            <span class="info-label">Người thực hiện:</span>
-                            <span class="info-value">${survey.assignedTo}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-icon">📅</span>
-                            <span class="info-label">Thời gian:</span>
-                            <span class="info-value">${formatDateTime(survey.scheduledTime)}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-icon">⚡</span>
-                            <span class="info-label">Ưu tiên:</span>
-                            <span class="info-value">${getPriorityText(survey.priority)}</span>
-                        </div>
+                        <div><b>Ảnh phát hiện:</b> ${survey.image_swimmer_url ? `<img src="${survey.image_swimmer_url}" alt="Ảnh" style="max-width:100px;max-height:80px;">` : 'Không có'}</div>
+                        <div><b>Số lượng phát hiện:</b> ${survey.detection_results ? survey.detection_results.length : 0}</div>
+                        <div><b>Video:</b> ${survey.full_video_url ? `<a href="${survey.full_video_url}" target="_blank">Xem video</a>` : 'Không có'}</div>
                     </div>
-                    
-                    <div class="survey-description">
-                        ${survey.description || 'Chưa có mô tả'}
-                    </div>
-                    
                     <div class="survey-actions">
-                        <button onclick="viewSurvey('${survey.id}')" class="btn btn-primary btn-sm">
-                            👁️ Xem
-                        </button>
-                        <button onclick="editSurvey('${survey.id}')" class="btn btn-warning btn-sm">
-                            ✏️ Sửa
-                        </button>
-                        <button onclick="deleteSurvey('${survey.id}')" class="btn btn-danger btn-sm">
-                            🗑️ Xóa
-                        </button>
-                        ${survey.status === 'pending' ? `
-                            <button onclick="startSurvey('${survey.id}')" class="btn btn-secondary btn-sm">
-                                ▶️ Bắt đầu
-                            </button>
-                        ` : ''}
-                        ${survey.status === 'active' ? `
-                            <button onclick="completeSurvey('${survey.id}')" class="btn btn-secondary btn-sm">
-                                ✅ Hoàn thành
-                            </button>
-                        ` : ''}
+                        <button onclick="viewSurvey('${survey._id}')" class="btn btn-primary btn-sm">👁️ Xem</button>
+                        <button onclick="editSurvey('${survey._id}')" class="btn btn-warning btn-sm">Sửa</button>
+                        <button onclick="deleteSurvey('${survey._id}')" class="btn btn-danger btn-sm">Xóa</button>
                     </div>
                 </div>
             `).join('');
         }
 
-        // Filter surveys
+        // Hàm tìm kiếm (theo survey_id hoặc drone_id)
         function filterSurveys() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const statusFilter = document.getElementById('statusFilter').value;
-            const teamFilter = document.getElementById('teamFilter').value;
-
+            const status = document.getElementById('statusFilter').value;
+            const teamName = document.getElementById('teamNameFilter').value.toLowerCase();
             filteredSurveys = surveys.filter(survey => {
-                const matchesSearch = survey.name.toLowerCase().includes(searchTerm) ||
-                                    survey.description.toLowerCase().includes(searchTerm) ||
-                                    survey.assignedTo.toLowerCase().includes(searchTerm);
-                const matchesStatus = !statusFilter || survey.status === statusFilter;
-                const matchesTeam = !teamFilter || survey.teamId === teamFilter;
-
-                return matchesSearch && matchesStatus && matchesTeam;
+                const matchSearch = (survey.survey_id && survey.survey_id.toLowerCase().includes(searchTerm)) ||
+                                    (survey.drone_id && survey.drone_id.toLowerCase().includes(searchTerm));
+                const matchStatus = !status || (survey.status && survey.status === status);
+                const matchTeam = !teamName || (survey.team_name && survey.team_name.toLowerCase().includes(teamName));
+                return matchSearch && matchStatus && matchTeam;
             });
-
             renderSurveys();
         }
 
         // Update statistics
-        function updateStats() {
-            const stats = surveys.reduce((acc, survey) => {
-                acc.total += 1;
-                acc[survey.status] = (acc[survey.status] || 0) + 1;
-                return acc;
-            }, { total: 0 });
-
-            document.getElementById('totalSurveys').innerText = stats.total;
-            document.getElementById('pendingSurveys').innerText = stats.pending || 0;
-            document.getElementById('activeSurveys').innerText = stats.active || 0;
-            document.getElementById('completedSurveys').innerText = stats.completed || 0;
-            document.getElementById('cancelledSurveys').innerText = stats.cancelled || 0;
-        }
+        
         // Get status text
         function getStatusText(status) {
             switch (status) {
                 case 'pending':
                     return 'Chờ thực hiện';
                 case 'active':
-                    return 'Đang thực hiện';
+                    return 'Đang thực hiện';    
                 case 'completed':
                     return 'Đã hoàn thành';
                 case 'cancelled':
@@ -958,40 +873,79 @@
         }
 
         // Create survey
-        function createSurvey() {
-            editingId = null;
-            document.getElementById('surveyForm').reset();
-        }
+        function createSurvey() { openSurveyModal(null); }
 
         // View survey details
-        function viewSurvey(surveyId) {
-            const survey = surveys.find(s => s.id === surveyId);
-            if (survey) {
-                document.getElementById('surveyDetails').innerHTML = `
-                    <h3>${survey.name}</h3>
-                    <p>${survey.description}</p>
-                    <p><strong>Trạng thái:</strong> ${getStatusText(survey.status)}</p>
-                    <p><strong>Độ ưu tiên:</strong> ${getPriorityText(survey.priority)}</p>
-                    <p><strong>Ngày tạo:</strong> ${formatDateTime(survey.createdAt)}</p>
-                `;
+        function viewSurvey(id) {
+            const survey = surveys.find(s => s._id === id);
+            if (!survey) return;
+            console.log('full_video_url:', survey.full_video_url);
+            console.log('image_swimmer_url:', survey.image_swimmer_url);
+            let imgHtml = '';
+            let videoHtml = '';
+            if (survey.full_video_url && survey.full_video_url.match(/\.(mp4|webm|ogg)$/i)) {
+                videoHtml = `<video controls style="max-width:100%; border-radius:8px; margin-top:12px;">
+                    <source src="${survey.full_video_url}" type="video/mp4">
+                    Trình duyệt không hỗ trợ video.
+                </video>`;
+            } else if (survey.image_swimmer_url && survey.image_swimmer_url.match(/\.(mp4|webm|ogg)$/i)) {
+                videoHtml = `<video controls style="max-width:100%; border-radius:8px; margin-top:12px;">
+                    <source src="${survey.image_swimmer_url}" type="video/mp4">
+                    Trình duyệt không hỗ trợ video.
+                </video>`;
+            } else if (survey.image_swimmer_url) {
+                imgHtml = `<img src="${survey.image_swimmer_url}" style="max-width:100%; max-height:1000px; border-radius:8px; box-shadow:0 2px 8px #0002;">`;
+            } else {
+                imgHtml = '<i>Không có ảnh</i>';
             }
+            if (!videoHtml && !imgHtml) videoHtml = '<b>Video:</b> Không có';
+            document.getElementById('viewSurveyImage').innerHTML = imgHtml + videoHtml;
+            // Hiển thị tổng số vật thể phát hiện và đếm theo loại
+            let detHtml = '<h4>Kết quả phát hiện:</h4>';
+            if (survey.detection_results && survey.detection_results.length > 0) {
+                detHtml += `<div><b>Tổng số vật thể phát hiện:</b> ${survey.detection_results.length}</div>`;
+                // Đếm số lượng từng loại
+                const typeCount = {};
+                survey.detection_results.forEach(r => {
+                    if (!typeCount[r.class]) typeCount[r.class] = 0;
+                    typeCount[r.class]++;
+                });
+                detHtml += '<ul style="margin-top:8px;">';
+                for (const key in typeCount) {
+                    detHtml += `<li><b>${key}</b>: ${typeCount[key]}</li>`;
+                }
+                detHtml += '</ul>';
+            } else {
+                detHtml += '<i>Không có dữ liệu</i>';
+            }
+            document.getElementById('viewDetectionResults').innerHTML = detHtml;
+            // Hiển thị JSON chi tiết
+            document.getElementById('viewSurveyJson').textContent = JSON.stringify(survey, null, 2);
+            // Show modal
+            document.getElementById('viewSurveyModal').style.display = 'block';
         }
 
         // Edit survey
-        function editSurvey(surveyId) {
-            const survey = surveys.find(s => s.id === surveyId);
-            if (survey) {
-                document.getElementById('surveyForm').elements['name'].value = survey.name;
-                document.getElementById('surveyForm').elements['description'].value = survey.description;
-                document.getElementById('surveyForm').elements['status'].value = survey.status;
-                document.getElementById('surveyForm').elements['priority'].value = survey.priority;
-                editingId = surveyId;
-            }
+        function editSurvey(id) {
+            const survey = surveys.find(s => s._id === id);
+            if (survey) openSurveyModal(survey);
         }
+
         // Delete survey
-        function deleteSurvey(surveyId) {
-            surveys = surveys.filter(s => s.id !== surveyId);
-            updateStats();
+        async function deleteSurvey(id) {
+            if (!confirm('Bạn có chắc muốn xóa báo cáo này?')) return;
+            try {
+                const res = await fetch(`http://localhost:3005/api/Survey_Drone/${id}`, { method: 'DELETE' });
+                const data = await res.json();
+                if (data.success) {
+                    showToast('Đã xóa báo cáo!');
+                    fetchSurveys();
+                } else {
+                    showToast('Xóa thất bại!', 'error');
+                }
+            } catch (err) {
+                showToast('Lỗi khi xóa!', 'error');
+            }
         }
 
         // Start survey
@@ -1038,45 +992,52 @@
             document.body.appendChild(toast);
             setTimeout(() => {
                 toast.remove();
-            }, 3000);
+            }, 3005);
         }
         // Close modal
         function closeModal() {
             document.getElementById('surveyModal').style.display = 'none';
             document.getElementById('surveyForm').reset();
-            editingId = null;
+            editingSurvey = null;
         }
         // Handle form submission
-        document.getElementById('surveyForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const form = event.target;
-            const name = form.elements['name'].value;
-            const description = form.elements['description'].value;
-            const status = form.elements['status'].value;
-            const priority = form.elements['priority'].value;
-
-            if (editingId) {
-                const surveyIndex = surveys.findIndex(s => s.id === editingId);
-                if (surveyIndex !== -1) {
-                    surveys[surveyIndex].name = name;
-                    surveys[surveyIndex].description = description;
-                    surveys[surveyIndex].status = status;
-                    surveys[surveyIndex].priority = priority;
+        const surveyForm = document.getElementById('surveyForm');
+        surveyForm.onsubmit = async function(e) {
+            e.preventDefault();
+            const surveyData = {
+                survey_id: document.getElementById('surveyId').value,
+                drone_id: document.getElementById('droneId').value,
+                status: document.getElementById('status').value,
+                team_name: document.getElementById('teamName').value,
+                assigned_at: document.getElementById('assignedAt').value
+            };
+            try {
+                let res, data;
+                if (editingSurvey && editingSurvey._id) {
+                    res = await fetch(`http://localhost:3005/api/Survey_Drone/${editingSurvey._id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(surveyData)
+                    });
+                } else {
+                    res = await fetch('http://localhost:3005/api/Survey_Drone', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(surveyData)
+                    });
                 }
-            } else {
-                const newSurvey = {
-                    id: Date.now(),
-                    name,
-                    description,
-                    status,
-                    priority,
-                    createdAt: new Date()
-                };
-                surveys.push(newSurvey);
+                data = await res.json();
+                if (data.success) {
+                    showToast(editingSurvey ? 'Đã cập nhật báo cáo!' : 'Đã thêm báo cáo!');
+                    closeModal();
+                    fetchSurveys();
+                } else {
+                    showToast('Lưu thất bại!', 'error');
+                }
+            } catch (err) {
+                showToast('Lỗi khi lưu!', 'error');
             }
-            updateStats();
-            closeModal();
-        });
+        };
         // Show modal
         function showModal() {
             document.getElementById('surveyModal').style.display = 'block';
@@ -1093,6 +1054,29 @@
                 closeModal();
             }
         });
+        function closeViewModal() {
+            document.getElementById('viewSurveyModal').style.display = 'none';
+        }
+        // Sửa hàm openSurveyModal để dùng cho cả thêm và sửa
+        function openSurveyModal(survey = null) {
+            editingSurvey = survey;
+            document.getElementById('surveyModal').style.display = 'block';
+            if (survey) {
+                document.getElementById('surveyId').value = survey.survey_id || '';
+                document.getElementById('droneId').value = survey.drone_id || '';
+                document.getElementById('status').value = survey.status || '';
+                document.getElementById('teamName').value = survey.team_name || '';
+                document.getElementById('assignedAt').value = survey.assigned_at ? survey.assigned_at.substring(0,16) : '';
+            } else {
+                document.getElementById('surveyForm').reset();
+            }
+        }
+
+        async function fetchMembersByTeamId(teamId) {
+            const res = await fetch(`http://localhost:3005/api/User?team_id=${teamId}`);
+            const data = await res.json();
+            return Array.isArray(data) ? data : (data.data || []);
+        }
     </script>
 </body>
 </html>

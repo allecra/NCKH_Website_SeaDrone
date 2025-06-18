@@ -112,50 +112,61 @@
             const teams = await teamRes.json();
             const team = Array.isArray(teams) ? teams[0] : teams;
             const members = await fetchMembersByTeamId(teamId);
+            console.log('API members:', members);
 
             // Hiển thị thông tin đội
             const teamInfo = document.querySelector('.team-header-info');
+            teamInfo.style.display = 'flex';
+            teamInfo.style.alignItems = 'center';
+            teamInfo.style.justifyContent = 'center';
+            teamInfo.style.gap = '24px';
+            teamInfo.style.margin = '32px 0 0 0';
             teamInfo.innerHTML = `
-                <h1>${team.team_name}</h1>
-                <div class="team-status ${team.status}" style="display:inline-block;margin-bottom:1rem;">
+                <h1 style="font-size:2.2rem;font-weight:800;margin:0 18px 0 0;letter-spacing:1px;">${team.team_name || 'Tên đội'}</h1>
+                <div class="team-status ${team.status}" style="display:inline-block;margin-bottom:0;font-size:1.1rem;padding:7px 18px;border-radius:16px;font-weight:600;${team.status==='active' ? 'background:#69f0ae;color:#00695c;' : 'background:#eee;color:#888;'}">
                     ${team.status === 'active' ? 'Hoạt động' : 'Không hoạt động'}
                 </div>
-                <span><i class="fas fa-users"></i> ${members.length} thành viên</span>
-                <button class="btn btn-primary" id="addMemberBtn"><i class="fas fa-plus"></i> Thêm thành viên</button>
+                <span style="font-size:1.1rem;color:#333;"><i class="fas fa-users"></i> ${members.length} thành viên</span>
+                <button class="btn btn-primary" id="addMemberBtn" style="font-size:1.1rem;padding:10px 22px;border-radius:12px;background:linear-gradient(90deg,#5f72bd,#9a5be4);color:#fff;font-weight:600;box-shadow:0 2px 8px #0001;display:flex;align-items:center;gap:8px;"><i class="fas fa-plus"></i> Thêm thành viên</button>
             `;
 
             // Hiển thị danh sách thành viên
             const membersGrid = document.querySelector('.members-grid');
+            membersGrid.style.display = 'grid';
+            membersGrid.style.gridTemplateColumns = 'repeat(auto-fit, minmax(320px, 1fr))';
+            membersGrid.style.gap = '32px';
+            membersGrid.style.justifyItems = 'center';
+            membersGrid.style.margin = '32px auto 0 auto';
+            membersGrid.style.maxWidth = '1100px';
+
             membersGrid.innerHTML = members.map(member => `
-    <div class="member-card">
-        <div class="member-avatar">
-            ${
-              member.avatar
-                ? `<img src="${member.avatar}" alt="avatar" class="avatar-img" onerror="this.onerror=null;this.src='https://via.placeholder.com/80/636e72/fff?text=AVT';">`
-                : `<i class="fas fa-user-circle"></i>`
-            }
-        </div>
-        <div class="member-info">
-            <h3>${member.fullname}</h3>
-            <span class="member-role ${member.role}">
-                ${member.role === 'technical_monitor' ? 'Giám sát kỹ thuật' : 'Nhân viên cứu hộ'}
-            </span>
-        </div>
-        <div class="member-details">
-            <div class="member-detail">
-                <i class="fas fa-phone detail-icon"></i>
-                <a href="tel:${member.phone}">${member.phone}</a>
-            </div>
-            <div class="member-detail">
-                <i class="fas fa-envelope detail-icon"></i>
-                <a href="mailto:${member.email}">${member.email}</a>
-            </div>
-        </div>
-        <div class="member-actions">
-            <button class="btn btn-primary btn-small" onclick="openModal('memberModal', 'edit', '${member.user_id}')"><i class="fas fa-edit"></i></button>
-            <button class="btn btn-danger btn-small" onclick="openModal('deleteMemberModal', 'delete', '${member.user_id}')"><i class="fas fa-trash"></i></button>
-        </div>
+  <div class="member-card" style="background:#fff;border-radius:20px;box-shadow:0 2px 12px #0001;padding:32px 24px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;min-width:300px;max-width:500px;transition:box-shadow .2s;">
+    <div class="member-avatar" style="margin-bottom:16px;">
+      ${member.avatar
+        ? `<img src="${member.avatar}" alt="avatar" class="avatar-img" style="width:90px;height:90px;border-radius:50%;object-fit:cover;box-shadow:0 2px 8px #0002;" onerror="this.onerror=null;this.src='https://via.placeholder.com/90/636e72/fff?text=AVT';">`
+        : `<i class="fas fa-user-circle" style="font-size:90px;color:#222;"></i>`}
     </div>
+    <div class="member-info" style="text-align:center;">
+      <h3 style="margin:0 0 8px 0;font-size:1.25rem;font-weight:700;letter-spacing:0.5px;">${member.fullname || member.name || 'Chưa cập nhật'}</h3>
+      <span class="member-role ${member.role}" style="display:inline-block;padding:7px 20px;border-radius:16px;font-size:1rem;font-weight:500;margin-bottom:10px;${member.role==='technical_monitor' ? 'background:#ffe082;color:#795548;' : 'background:#69f0ae;color:#00695c;'}">
+        ${member.role === 'technical_monitor' ? 'Giám sát kỹ thuật' : 'Nhân viên cứu hộ'}
+      </span>
+    </div>
+    <div class="member-details" style="margin:12px 0 18px 0;">
+      <div class="member-detail" style="margin-bottom:4px;">
+        <i class="fas fa-phone detail-icon"></i>
+        <a href="tel:${member.phone}" style="color:#222;text-decoration:none;font-size:1rem;">${member.phone || ''}</a>
+      </div>
+      <div class="member-detail">
+        <i class="fas fa-envelope detail-icon"></i>
+        <a href="mailto:${member.email}" style="color:#222;text-decoration:none;font-size:1rem;">${member.email || ''}</a>
+      </div>
+    </div>
+    <div class="member-actions" style="display:flex;gap:16px;">
+      <button class="btn btn-primary btn-small" style="background:#1976d2;padding:10px 18px;border-radius:8px;transition:background .2s;" onmouseover="this.style.background='#1565c0'" onmouseout="this.style.background='#1976d2'" onclick="openModal('memberModal', 'edit', '${member.user_id}')"><i class="fas fa-edit"></i></button>
+      <button class="btn btn-danger btn-small" style="background:#e53935;padding:10px 18px;border-radius:8px;transition:background .2s;" onmouseover="this.style.background='#b71c1c'" onmouseout="this.style.background='#e53935'" onclick="openModal('deleteMemberModal', 'delete', '${member.user_id}')"><i class="fas fa-trash"></i></button>
+    </div>
+  </div>
 `).join('');
         }
     }
@@ -235,10 +246,81 @@
 
     async function fetchMembersByTeamId(teamId) {
         const res = await fetch(`http://localhost:3005/api/User?team_id=${teamId}`);
-        return await res.json();
+        const data = await res.json();
+        return Array.isArray(data) ? data : (data.data || []);
     }
 
     renderMembers();
+
+    // Sửa lại phần header
+    const appHeader = document.querySelector('.app-header');
+    if (appHeader) {
+        appHeader.style.background = '#fff';
+        appHeader.style.boxShadow = '0 2px 16px #0001';
+        appHeader.style.borderBottomLeftRadius = '24px';
+        appHeader.style.borderBottomRightRadius = '24px';
+        appHeader.style.display = 'flex';
+        appHeader.style.justifyContent = 'space-between';
+        appHeader.style.alignItems = 'center';
+        appHeader.style.padding = '18px 40px 18px 40px';
+    }
+    const logo = document.querySelector('.logo');
+    if (logo) {
+        logo.style.display = 'flex';
+        logo.style.alignItems = 'center';
+        logo.style.fontSize = '1.5rem';
+        logo.style.fontWeight = 'bold';
+        logo.style.color = '#3f51b5';
+    }
+    const headerRight = document.querySelector('.header-right');
+    if (headerRight) {
+        headerRight.style.display = 'flex';
+        headerRight.style.alignItems = 'center';
+        headerRight.style.gap = '18px';
+    }
+    const logoutBtn = document.querySelector('.logout-btn');
+    if (logoutBtn) {
+        logoutBtn.style.background = 'linear-gradient(90deg,#5f72bd,#9a5be4)';
+        logoutBtn.style.color = '#fff';
+        logoutBtn.style.border = 'none';
+        logoutBtn.style.borderRadius = '24px';
+        logoutBtn.style.padding = '10px 22px';
+        logoutBtn.style.fontWeight = '600';
+        logoutBtn.style.fontSize = '1rem';
+        logoutBtn.style.boxShadow = '0 2px 8px #0001';
+        logoutBtn.style.display = 'flex';
+        logoutBtn.style.alignItems = 'center';
+        logoutBtn.style.gap = '8px';
+        logoutBtn.onmouseover = function() { this.style.background = 'linear-gradient(90deg,#4e54c8,#8f94fb)'; };
+        logoutBtn.onmouseout = function() { this.style.background = 'linear-gradient(90deg,#5f72bd,#9a5be4)'; };
+    }
+    // Sửa lại nút quay lại
+    const backBtn = document.querySelector('.back-btn');
+    if (backBtn) {
+        backBtn.style.background = '#f3f6fd';
+        backBtn.style.color = '#3f51b5';
+        backBtn.style.border = 'none';
+        backBtn.style.borderRadius = '24px';
+        backBtn.style.padding = '10px 22px';
+        backBtn.style.fontWeight = '600';
+        backBtn.style.fontSize = '1rem';
+        backBtn.style.boxShadow = '0 2px 8px #0001';
+        backBtn.style.display = 'flex';
+        backBtn.style.alignItems = 'center';
+        backBtn.style.gap = '8px';
+        backBtn.onmouseover = function() { this.style.background = '#e3e7f7'; };
+        backBtn.onmouseout = function() { this.style.background = '#f3f6fd'; };
+    }
+    // Sửa lại tiêu đề breadcrumb
+    const breadcrumbContent = document.querySelector('.breadcrumb-content');
+    if (breadcrumbContent) {
+        breadcrumbContent.style.fontSize = '1.2rem';
+        breadcrumbContent.style.fontWeight = '700';
+        breadcrumbContent.style.color = '#222';
+        breadcrumbContent.style.display = 'flex';
+        breadcrumbContent.style.alignItems = 'center';
+        breadcrumbContent.style.gap = '8px';
+    }
 </script>
     <script src="../js/auth.js"></script>
 </body>

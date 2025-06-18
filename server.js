@@ -392,20 +392,24 @@ app.delete('/api/drones/:id', async (req, res, next) => {
 });
 
 // API cho survey
-app.get('/api/surveys', async (req, res, next) => {
+app.get('/api/Survey', async (req, res, next) => {
     try {
-        const { beach_id, team_id, status } = req.query;
+        const { survey_id, survey_name, description, status, created_by } = req.query;
         let query = {};
-        if (beach_id) query.beach_id = beach_id;
-        if (team_id) query.team_id = team_id;
+        if (survey_id ) query.survey_id = survey_id;    
+        if (survey_name) query.survey_name = survey_name;
+        if (description) query.description = description;
         if (status) query.status = status;
+        if (created_by) query.created_by = created_by;
         
         const surveys = await Survey.find(query);
+        console.log('Found surveys:', surveys);
         res.json({
             success: true,
             data: surveys
         });
     } catch (err) {
+        console.error('Error in /api/Survey:', err);
         next(err);
     }
 });
@@ -481,6 +485,109 @@ app.post('/api/auth/login', async (req, res) => {
     }
 
     res.status(401).json({ success: false, message: 'Sai thông tin đăng nhập!' });
+});
+
+// API lấy tất cả Survey_Drone
+app.get('/api/Survey_Drone', async (req, res) => {
+    try {
+        const surveyDrones = await Survey_Drone.find();
+        res.json({ success: true, data: surveyDrones });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Lỗi server', error: err.message });
+    }
+});
+
+// Thêm mới
+app.post('/api/Survey_Drone', async (req, res) => {
+    try {
+        const surveyDrone = new Survey_Drone(req.body);
+        await surveyDrone.save();
+        res.json({ success: true, data: surveyDrone });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Lỗi server', error: err.message });
+    }
+});
+
+// Sửa
+app.put('/api/Survey_Drone/:id', async (req, res) => {
+    try {
+        const surveyDrone = await Survey_Drone.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        if (!surveyDrone) return res.status(404).json({ success: false, message: 'Không tìm thấy báo cáo' });
+        res.json({ success: true, data: surveyDrone });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Lỗi server', error: err.message });
+    }
+});
+
+// Xóa
+app.delete('/api/Survey_Drone/:id', async (req, res) => {
+    try {
+        const surveyDrone = await Survey_Drone.findByIdAndDelete(req.params.id);
+        if (!surveyDrone) return res.status(404).json({ success: false, message: 'Không tìm thấy báo cáo' });
+        res.json({ success: true, message: 'Đã xóa báo cáo' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Lỗi server', error: err.message });
+    }
+});
+
+// API lấy danh sách user (có thể lọc theo team_id)
+app.get('/api/User', async (req, res) => {
+    try {
+        const { team_id, user_id } = req.query;
+        let query = {};
+        if (team_id) query.team_id = team_id;
+        if (user_id) query.user_id = user_id;
+        const users = await User.find(query);
+        res.json({ success: true, data: users });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Lỗi server', error: err.message });
+    }
+});
+
+// API thêm user
+app.post('/api/User', async (req, res) => {
+    try {
+        const user = new User(req.body);
+        await user.save();
+        res.json({ success: true, data: user });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Lỗi server', error: err.message });
+    }
+});
+
+// API sửa user
+app.put('/api/User/:id', async (req, res) => {
+    try {
+        const user = await User.findOneAndUpdate({ user_id: req.params.id }, req.body, { new: true });
+        if (!user) return res.status(404).json({ success: false, message: 'Không tìm thấy user' });
+        res.json({ success: true, data: user });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Lỗi server', error: err.message });
+    }
+});
+
+// API xóa user
+app.delete('/api/User/:id', async (req, res) => {
+    try {
+        const user = await User.findOneAndDelete({ user_id: req.params.id });
+        if (!user) return res.status(404).json({ success: false, message: 'Không tìm thấy user' });
+        res.json({ success: true, message: 'Đã xóa user' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Lỗi server', error: err.message });
+    }
+});
+
+// API lấy danh sách team (có thể lọc theo team_id)
+app.get('/api/Team', async (req, res) => {
+    try {
+        const { team_id } = req.query;
+        let query = {};
+        if (team_id) query.team_id = team_id;
+        const teams = await Team.find(query);
+        res.json({ success: true, data: teams });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Lỗi server', error: err.message });
+    }
 });
 
 // Middleware xử lý lỗi
