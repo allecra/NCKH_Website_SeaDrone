@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý Survey - Hệ thống Cứu hộ Biển</title>
+    <title>Quản lý Báo cáo Khảo sát - SeaDrone Rescue</title>
+    <link rel="stylesheet" href="../css/styles.css">
     <style>
         * {
             margin: 0;
@@ -12,110 +13,207 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #01125d 0%, #1852a3 50%, #65e68a 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
             min-height: 100vh;
             color: #333;
         }
 
-        .app-container {
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
             max-width: 1400px;
             margin: 0 auto;
-            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 35px;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
         }
 
-        .app-header {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: white;
-            padding: 1rem 2rem;
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            background: linear-gradient(45deg, #001057, #4065ca);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientText 3s ease infinite;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes gradientText {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .header-subtitle {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        .header-actions {
             display: flex;
-            justify-content: space-between;
+            gap: 15px;
+            flex-wrap: wrap;
             align-items: center;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
 
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 300px;
         }
 
-        .logo::before {
-            content: "🚁";
-            font-size: 2rem;
+        .search-box input {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border: 2px solid #e1e5e9;
+            border-radius: 25px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: #fff;
         }
 
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.2);
         }
 
-        .breadcrumb {
-            padding: 1rem 2rem;
-            background: rgba(30, 60, 114, 0.05);
-            border-bottom: 1px solid rgba(30, 60, 114, 0.1);
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
         }
 
-        .breadcrumb a {
-            color: #1e3c72;
+        .filter-select {
+            padding: 12px 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 25px;
+            font-size: 14px;
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 200px;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
             text-decoration: none;
-            font-weight: 500;
-        }
-
-        .breadcrumb a:hover {
-            text-decoration: underline;
-        }
-
-        .main-content {
-            padding: 2rem;
-        }
-
-        .content-header {
-            display: flex;
-            justify-content: space-between;
+            display: inline-flex;
             align-items: center;
-            margin-bottom: 2rem;
-            background: white;
-            padding: 1.5rem;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(30, 60, 114, 0.1);
+            gap: 8px;
         }
 
-        .content-header h1 {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #1e3c72;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
 
-        .content-header h1::before {
-            content: "📊";
-            font-size: 2.5rem;
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+            transform: translateY(-2px);
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 12px;
         }
 
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+            gap: 20px;
+            margin-bottom: 30px;
         }
 
         .stat-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(30, 60, 114, 0.1);
-            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             overflow: hidden;
         }
@@ -124,209 +222,144 @@
             content: '';
             position: absolute;
             top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s;
         }
 
         .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.25);
+        }
+
+        .stat-card:hover::before {
+            left: 100%;
         }
 
         .stat-number {
             font-size: 2.5rem;
-            font-weight: 700;
-            color: #1e3c72;
-            margin-bottom: 0.5rem;
+            font-weight: bold;
+            margin-bottom: 8px;
         }
 
         .stat-label {
             color: #666;
-            font-weight: 500;
-            text-transform: uppercase;
             font-size: 0.9rem;
-            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .filter-section {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(30, 60, 114, 0.1);
-            margin-bottom: 2rem;
+        .pending { 
+            color: #ffc107; 
+            text-shadow: 0 0 20px rgba(255, 193, 7, 0.5);
+        }
+        .active { 
+            color: #28a745; 
+            text-shadow: 0 0 20px rgba(40, 167, 69, 0.5);
+        }
+        .completed { 
+            color: #007bff; 
+            text-shadow: 0 0 20px rgba(0, 123, 255, 0.5);
+        }
+        .cancelled { 
+            color: #dc3545; 
+            text-shadow: 0 0 20px rgba(220, 53, 69, 0.5);
         }
 
-        .filter-header {
+        .surveys-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .surveys-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
         }
 
-        .filter-header h3 {
-            color: #1e3c72;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .filter-header h3::before {
-            content: "🔍";
-        }
-
-        .filter-controls {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            align-items: end;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .form-group label {
-            font-weight: 600;
+        .surveys-title {
+            font-size: 1.8rem;
             color: #333;
-            font-size: 0.9rem;
         }
 
-        .form-group input,
-        .form-group select {
-            padding: 0.75rem;
-            border: 2px solid #e1e5e9;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            background: white;
+        .survey-grid {
+            display: grid;
+            gap: 20px;
         }
 
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .data-table-container {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(30, 60, 114, 0.1);
+        .survey-card {
+            background: linear-gradient(135deg, #fff 0%, #f8f9ff 100%);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+            border: 2px solid transparent;
+            background-clip: padding-box;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
             overflow: hidden;
         }
 
-        .table-header {
-            padding: 1.5rem;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            border-bottom: 1px solid rgba(30, 60, 114, 0.1);
+        .survey-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #f5576c);
+            background-size: 400% 400%;
+            animation: gradientShift 3s ease infinite;
+        }
+
+        .survey-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.05), transparent);
+            border-radius: 50%;
+            transform: translate(50px, -50px);
+        }
+
+        .survey-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        .survey-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
+            margin-bottom: 15px;
         }
 
-        .table-header h3 {
-            color: #1e3c72;
+        .survey-title {
+            font-size: 1.3rem;
             font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .table-header h3::before {
-            content: "📋";
-        }
-
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .data-table th {
-            background: #1e3c72;
-            color: white;
-            padding: 1rem;
-            text-align: left;
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.9rem;
-            letter-spacing: 0.5px;
-        }
-
-        .data-table td {
-            padding: 1rem;
-            border-bottom: 1px solid #e1e5e9;
-            vertical-align: middle;
-        }
-
-        .data-table tbody tr:hover {
-            background: rgba(102, 126, 234, 0.05);
-        }
-
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
-        }
-
-        .btn-secondary {
-            background: #f8f9fa;
             color: #333;
-            border: 2px solid #e1e5e9;
+            margin-bottom: 5px;
         }
 
-        .btn-secondary:hover {
-            background: #e9ecef;
-            transform: translateY(-1px);
-        }
-
-        .btn-small {
-            padding: 0.5rem 1rem;
-            font-size: 0.8rem;
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
-            color: white;
-        }
-
-        .btn-danger:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, #51cf66 0%, #40c057 100%);
-            color: white;
+        .survey-id {
+            font-size: 0.85rem;
+            color: #999;
+            font-family: monospace;
         }
 
         .status-badge {
-            padding: 0.25rem 0.75rem;
+            padding: 6px 12px;
             border-radius: 20px;
             font-size: 0.8rem;
             font-weight: 600;
@@ -334,22 +367,71 @@
             letter-spacing: 0.5px;
         }
 
+        .status-pending {
+            background: rgba(255, 193, 7, 0.2);
+            color: #856404;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+
         .status-active {
-            background: rgba(81, 207, 102, 0.1);
-            color: #40c057;
-            border: 1px solid rgba(81, 207, 102, 0.3);
+            background: rgba(40, 167, 69, 0.2);
+            color: #155724;
+            border: 1px solid rgba(40, 167, 69, 0.3);
         }
 
         .status-completed {
-            background: rgba(102, 126, 234, 0.1);
-            color: #667eea;
-            border: 1px solid rgba(102, 126, 234, 0.3);
+            background: rgba(0, 123, 255, 0.2);
+            color: #004085;
+            border: 1px solid rgba(0, 123, 255, 0.3);
         }
 
-        .status-pending {
-            background: rgba(255, 193, 7, 0.1);
-            color: #fd7e14;
-            border: 1px solid rgba(255, 193, 7, 0.3);
+        .status-cancelled {
+            background: rgba(220, 53, 69, 0.2);
+            color: #721c24;
+            border: 1px solid rgba(220, 53, 69, 0.3);
+        }
+
+        .survey-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-icon {
+            width: 18px;
+            height: 18px;
+            color: #667eea;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .info-value {
+            color: #777;
+        }
+
+        .survey-description {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .survey-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         .modal {
@@ -360,450 +442,600 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(5px);
         }
 
         .modal-content {
-            background: white;
+            background-color: #fff;
             margin: 5% auto;
-            padding: 2rem;
-            border-radius: 16px;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
             max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             position: relative;
-            animation: modalSlideIn 0.3s ease;
         }
 
-        @keyframes modalSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .close-modal {
+        .close {
             position: absolute;
-            right: 1rem;
-            top: 1rem;
-            font-size: 1.5rem;
+            right: 20px;
+            top: 20px;
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
             cursor: pointer;
-            color: #666;
             transition: color 0.3s ease;
         }
 
-        .close-modal:hover {
+        .close:hover {
+            color: #000;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
             color: #333;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
         }
 
         .form-actions {
             display: flex;
-            gap: 1rem;
+            gap: 15px;
             justify-content: flex-end;
-            margin-top: 2rem;
+            margin-top: 30px;
         }
 
-        .app-footer {
-            background: #1e3c72;
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 10px;
             color: white;
+            font-weight: 600;
+            z-index: 1001;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast-success {
+            background: #28a745;
+        }
+
+        .toast-error {
+            background: #dc3545;
+        }
+
+        .toast-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .empty-state {
             text-align: center;
-            padding: 1rem;
-            margin-top: auto;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .search-box {
-            position: relative;
-            flex: 1;
-            max-width: 300px;
-        }
-
-        .search-box input {
-            width: 100%;
-            padding: 0.75rem 1rem 0.75rem 2.5rem;
-            border: 2px solid #e1e5e9;
-            border-radius: 8px;
-            font-size: 1rem;
-        }
-
-        .search-box::before {
-            content: "🔍";
-            position: absolute;
-            left: 0.75rem;
-            top: 50%;
-            transform: translateY(-50%);
+            padding: 60px 20px;
             color: #666;
         }
 
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
         @media (max-width: 768px) {
-            .main-content {
-                padding: 1rem;
+            .container {
+                padding: 10px;
             }
-            
-            .content-header {
+
+            .header-actions {
                 flex-direction: column;
-                gap: 1rem;
                 align-items: stretch;
             }
-            
-            .filter-controls {
+
+            .search-box {
+                min-width: auto;
+            }
+
+            .survey-info {
                 grid-template-columns: 1fr;
             }
-            
-            .stats-grid {
-                grid-template-columns: 1fr;
+
+            .survey-actions {
+                justify-content: center;
             }
-            
-            .data-table-container {
-                overflow-x: auto;
+
+            .modal-content {
+                margin: 10% auto;
+                width: 95%;
+                padding: 20px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <header class="app-header">
-            <div class="logo">Hệ thống Cứu hộ Biển</div>
-            <div class="user-info">
-                <span id="currentUser">Đội trưởng Cứu hộ</span>
-                <button id="logoutBtn" class="btn btn-small btn-secondary">Đăng xuất</button>
-            </div>
-        </header>
-        
-        <nav class="breadcrumb">
-            <a href="dashboard.html">Bảng điều khiển</a> &gt; Quản lý Survey
-        </nav>
-        
-        <main class="main-content">
-            <div class="content-header">
-                <h1>Quản lý Survey</h1>
-            </div>
-
-            <!-- Statistics Cards -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-number">24</div>
-                    <div class="stat-label">Survey hôm nay</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">156</div>
-                    <div class="stat-label">Survey tuần này</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">642</div>
-                    <div class="stat-label">Survey tháng này</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">2,847</div>
-                    <div class="stat-label">Tổng survey năm nay</div>
-                </div>
-            </div>
-
-            <!-- Filter Section -->
-            <div class="filter-section">
-                <div class="filter-header">
-                    <h3>Bộ lọc và Tìm kiếm</h3>
-                    <div class="search-box">
-                        <input type="text" id="searchInput" placeholder="Tìm kiếm survey...">
-                    </div>
-                </div>
-                <div class="filter-controls">
-                    <div class="form-group">
-                        <label for="timeFilter">Thời gian</label>
-                        <select id="timeFilter">
-                            <option value="today">Hôm nay</option>
-                            <option value="week">Tuần này</option>
-                            <option value="month">Tháng này</option>
-                            <option value="year">Năm này</option>
-                            <option value="custom">Tùy chỉnh</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="statusFilter">Trạng thái</label>
-                        <select id="statusFilter">
-                            <option value="all">Tất cả</option>
-                            <option value="active">Đang tiến hành</option>
-                            <option value="completed">Hoàn thành</option>
-                            <option value="pending">Chờ xử lý</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="areaFilter">Khu vực</label>
-                        <select id="areaFilter">
-                            <option value="all">Tất cả khu vực</option>
-                            <option value="north">Bãi biển phía Bắc</option>
-                            <option value="south">Bãi biển phía Nam</option>
-                            <option value="center">Trung tâm</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>&nbsp;</label>
-                        <button class="btn btn-primary">Áp dụng bộ lọc</button>
-                    </div>
-                </div>
-            </div>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🚁 Quản lý Báo cáo Khảo sát</h1>
+            <p class="header-subtitle">Hệ thống quản lý báo cáo khảo sát biển cho đội cứu hộ SeaDrone</p>
             
-            <!-- Data Table -->
-            <div class="data-table-container">
-                <div class="table-header">
-                    <h3>Danh sách Survey</h3>
-                    <button class="btn btn-secondary btn-small">📊 Xuất báo cáo</button>
+            <div class="header-actions">
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchInput" placeholder="Tìm kiếm báo cáo khảo sát..." onkeyup="filterSurveys()">
                 </div>
-                <table class="data-table" id="surveysTable">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Tên Survey</th>
-                            <th>Khu vực</th>
-                            <th>Thời gian</th>
-                            <th>Trạng thái</th>
-                            <th>Người thực hiện</th>
-                            <th>Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>#SV001</td>
-                            <td>Khảo sát an toàn bãi biển sáng</td>
-                            <td>Bãi biển phía Bắc</td>
-                            <td>16/06/2025 08:00</td>
-                            <td><span class="status-badge status-completed">Hoàn thành</span></td>
-                            <td>Nguyễn Văn A</td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn btn-small btn-secondary">👁️ Xem chi tiết</button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>#SV002</td>
-                            <td>Kiểm tra thiết bị cứu hộ</td>
-                            <td>Trung tâm</td>
-                            <td>16/06/2025 14:30</td>
-                            <td><span class="status-badge status-active">Đang tiến hành</span></td>
-                            <td>Trần Thị B</td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn btn-small btn-secondary">👁️ Xem chi tiết</button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>#SV003</td>
-                            <td>Đánh giá mức độ đông đúc</td>
-                            <td>Bãi biển phía Nam</td>
-                            <td>16/06/2025 16:00</td>
-                            <td><span class="status-badge status-pending">Chờ xử lý</span></td>
-                            <td>Lê Văn C</td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn btn-small btn-secondary">👁️ Xem chi tiết</button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </main>
-        
-        <!-- Add/Edit Survey Modal -->
-        <div id="surveyModal" class="modal">
-            <div class="modal-content">
-                <span class="close-modal">&times;</span>
-                <h2 id="modalTitle">Thêm Survey Mới</h2>
-                <form id="surveyForm">
-                    <input type="hidden" id="surveyId">
-                    <div class="form-group">
-                        <label for="surveyName">Tên Survey</label>
-                        <input type="text" id="surveyName" name="surveyName" required placeholder="Nhập tên survey...">
-                    </div>
-                    <div class="form-group">
-                        <label for="surveyArea">Khu vực</label>
-                        <select id="surveyArea" name="surveyArea" required>
-                            <option value="">Chọn khu vực</option>
-                            <option value="north">Bãi biển phía Bắc</option>
-                            <option value="south">Bãi biển phía Nam</option>
-                            <option value="center">Trung tâm</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="surveyTime">Thời gian thực hiện</label>
-                        <input type="datetime-local" id="surveyTime" name="surveyTime" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="surveyStatus">Trạng thái</label>
-                        <select id="surveyStatus" name="surveyStatus" required>
-                            <option value="pending">Chờ xử lý</option>
-                            <option value="active">Đang tiến hành</option>
-                            <option value="completed">Hoàn thành</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="assignedTo">Người thực hiện</label>
-                        <input type="text" id="assignedTo" name="assignedTo" required placeholder="Nhập tên người thực hiện...">
-                    </div>
-                    <div class="form-group">
-                        <label for="surveyDescription">Mô tả</label>
-                        <textarea id="surveyDescription" name="surveyDescription" rows="4" placeholder="Nhập mô tả chi tiết về survey..." style="resize: vertical; padding: 0.75rem; border: 2px solid #e1e5e9; border-radius: 8px; font-family: inherit;"></textarea>
-                    </div>
-                    <div class="form-actions">
-                        <button type="button" class="btn btn-secondary" id="cancelSurveyBtn">Hủy</button>
-                        <button type="submit" class="btn btn-primary">💾 Lưu Survey</button>
-                    </div>
-                </form>
+                
+                <select id="statusFilter" class="filter-select" onchange="filterSurveys()">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="pending">Chờ thực hiện</option>
+                    <option value="active">Đang thực hiện</option>
+                    <option value="completed">Hoàn thành</option>
+                    <option value="cancelled">Đã hủy</option>
+                </select>
+                
+                <select id="teamFilter" class="filter-select" onchange="filterSurveys()">
+                    <option value="">Tất cả đội</option>
+                    <option value="team1">Đội Alpha</option>
+                    <option value="team2">Đội Beta</option>
+                    <option value="team3">Đội Gamma</option>
+                </select>
+                
+                <button onclick="createSurvey()" class="btn btn-primary">
+                    ➕ Thêm Báo cáo
+                </button>
             </div>
         </div>
-        
-        <!-- Delete Confirmation Modal -->
-        <div id="deleteModal" class="modal">
-            <div class="modal-content">
-                <h2>⚠️ Xác nhận xóa</h2>
-                <p>Bạn có chắc chắn muốn xóa survey này? Hành động này không thể hoàn tác.</p>
-                <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" id="cancelDeleteBtn">Hủy</button>
-                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">🗑️ Xóa</button>
-                </div>
+
+        <!-- Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number pending" id="pendingCount">12</div>
+                <div class="stat-label">Chờ thực hiện</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number active" id="activeCount">5</div>
+                <div class="stat-label">Đang thực hiện</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number completed" id="completedCount">28</div>
+                <div class="stat-label">Hoàn thành</div>    
+            </div>
+            <div class="stat-card">
+                <div class="stat-number cancelled" id="cancelledCount">3</div>
+                <div class="stat-label">Đã hủy</div>
             </div>
         </div>
-        
-        <footer class="app-footer">
-            <p>&copy; 2025 Hệ thống Cứu hộ Biển - Đảm bảo an toàn cho mọi người</p>
-        </footer>
+
+        <!-- Surveys Container -->
+        <div class="surveys-container">
+            <div class="surveys-header">
+                <h2 class="surveys-title">Danh sách Báo cáo Khảo sát</h2>
+                <div>
+                    <button onclick="exportReports()" class="btn btn-secondary btn-sm">
+                        📊 Xuất báo cáo
+                    </button>
+                </div>
+            </div>
+
+            <div id="surveyList" class="survey-grid">
+                <!-- Surveys will be populated here -->
+            </div>
+        </div>
     </div>
 
+    <!-- Survey Detail/Edit Modal -->
+    <div id="surveyModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle">Thông tin Báo cáo Khảo sát</h2>
+            <form id="surveyForm">
+                <input type="hidden" id="surveyId">
+                
+                <div class="form-group">
+                    <label for="surveyName">Tên báo cáo khảo sát:</label>
+                    <input type="text" id="surveyName" name="surveyName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="beachId">Khu vực khảo sát:</label>
+                    <select id="beachId" name="beachId" required>
+                        <option value="">Chọn khu vực</option>
+                        
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="teamId">Đội thực hiện:</label>
+                    <select id="teamId" name="teamId" required>
+                        <option value="">Chọn đội</option>
+                      
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="status">Trạng thái:</label>
+                    <select id="status" name="status" required>
+                        <option value="pending">Chờ thực hiện</option>
+                        <option value="active">Đang thực hiện</option>
+                        <option value="completed">Hoàn thành</option>
+                        <option value="cancelled">Đã hủy</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="scheduledTime">Thời gian thực hiện:</label>
+                    <input type="datetime-local" id="scheduledTime" name="scheduledTime" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="assignedTo">Người chịu trách nhiệm:</label>
+                    <input type="text" id="assignedTo" name="assignedTo" placeholder="Nhập tên người chịu trách nhiệm">
+                </div>
+                
+                <div class="form-group">
+                    <label for="priority">Mức độ ưu tiên:</label>
+                    <select id="priority" name="priority">
+                        <option value="low">Thấp</option>
+                        <option value="medium">Trung bình</option>
+                        <option value="high">Cao</option>
+                        <option value="urgent">Khẩn cấp</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Mô tả chi tiết:</label>
+                    <textarea id="description" name="description" placeholder="Nhập mô tả chi tiết về nhiệm vụ khảo sát..."></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">💾 Lưu</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">❌ Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast notification -->
+    <div id="toast" class="toast"></div>
+
     <script>
-        // Modal functionality
-        const surveyModal = document.getElementById('surveyModal');
-        const deleteModal = document.getElementById('deleteModal');
-        const addSurveyBtn = document.getElementById('addSurveyBtn');
-        const closeBtns = document.querySelectorAll('.close-modal');
-        const cancelSurveyBtn = document.getElementById('cancelSurveyBtn');
-        const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+        let surveys = [];
+        let filteredSurveys = [];
+        let editingId = null;
 
-        // Open add survey modal
-        addSurveyBtn.addEventListener('click', () => {
-            document.getElementById('modalTitle').textContent = 'Thêm Survey Mới';
-            document.getElementById('surveyForm').reset();
-            document.getElementById('surveyId').value = '';
-            surveyModal.style.display = 'block';
-        });
-
-        // Close modals
-        closeBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.target.closest('.modal').style.display = 'none';
-            });
-        });
-
-        cancelSurveyBtn.addEventListener('click', () => {
-            surveyModal.style.display = 'none';
-        });
-
-        cancelDeleteBtn.addEventListener('click', () => {
-            deleteModal.style.display = 'none';
-        });
-
-        // Close modal when clicking outside
-        window.addEventListener('click', (e) => {
-            if (e.target.classList.contains('modal')) {
-                e.target.style.display = 'none';
+        // Hàm lấy dữ liệu khảo sát từ backend
+        async function fetchSurveys() {
+            try {
+                const res = await fetch('http://localhost:3005/api/Survey');
+                const data = await res.json();
+                console.log('API Response:', data);
+                surveys = Array.isArray(data) ? data : (data.data || []);
+                console.log('Processed surveys:', surveys);
+                filteredSurveys = [...surveys];
+                renderSurveys();
+                updateStats();
+            } catch (err) {
+                console.error('Error fetching surveys:', err);
+                showToast('Không thể tải dữ liệu khảo sát!', 'error');
             }
+        }
+
+        // Hàm lấy dữ liệu Survey_Drone (nếu cần)
+        async function fetchSurveyDrones() {
+            try {
+                const res = await fetch('http://localhost:3005/api/Survey_Drone');
+                const data = await res.json();
+                // Xử lý data ở đây nếu cần liên kết với surveys
+                // Ví dụ: lưu vào biến toàn cục hoặc merge vào surveys
+            } catch (err) {
+                showToast('Không thể tải dữ liệu Survey_Drone!', 'error');
+            }
+        }
+
+        // Gọi fetch khi trang load
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchSurveys();
+             fetchSurveyDrones(); // Nếu cần dùng
         });
 
-        // Handle form submission
-        document.getElementById('surveyForm').addEventListener('submit', (e) => {
-            e.preventDefault();
+        // Render surveys
+        function renderSurveys() {
+            const surveyList = document.getElementById('surveyList');
             
-            // Here you would typically send the data to your backend
-            const formData = new FormData(e.target);
-            const surveyData = Object.fromEntries(formData);
-            
-            console.log('Survey data:', surveyData);
-            
-            // Close modal and show success message
-            surveyModal.style.display = 'none';
-            alert('Survey đã được lưu thành công!');
-        });
+            if (filteredSurveys.length === 0) {
+                surveyList.innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        <h3>Không tìm thấy báo cáo khảo sát</h3>
+                        <p>Thử thay đổi bộ lọc hoặc thêm báo cáo khảo sát mới</p>
+                    </div>
+                `;
+                return;
+            }
 
-        // Handle edit buttons
-        document.querySelectorAll('.data-table .btn-primary').forEach(btn => {
-            if (btn.textContent.includes('Sửa')) {
-                btn.addEventListener('click', (e) => {
-                    const row = e.target.closest('tr');
-                    const cells = row.querySelectorAll('td');
+            surveyList.innerHTML = filteredSurveys.map(survey => `
+                <div class="survey-card">
+                    <div class="survey-header">
+                        <div>
+                            <div class="survey-title">${survey.survey_name}</div>
+                            <div class="survey-id">ID: ${survey.survey_id}</div>
+                        </div>
+                        <span class="status-badge status-${survey.status}">
+                            ${getStatusText(survey.status)}
+                        </span>
+                    </div>
                     
-                    document.getElementById('modalTitle').textContent = 'Chỉnh sửa Survey';
-                    document.getElementById('surveyId').value = cells[0].textContent;
-                    document.getElementById('surveyName').value = cells[1].textContent;
-                    // Populate other fields as needed
+                    <div class="survey-info">
+                        
+                    </div>
                     
-                    surveyModal.style.display = 'block';
-                });
-            }
-        });
+                    <div class="survey-description">
+                        ${survey.description || 'Chưa có mô tả'}
+                    </div>
+                    
+                    <div class="survey-actions">
+                        <button onclick="viewSurvey('${survey.id}')" class="btn btn-primary btn-sm">
+                            👁️ Xem
+                        </button>
+                        <button onclick="editSurvey('${survey.id}')" class="btn btn-warning btn-sm">
+                             Sửa
+                        </button>
+                        <button onclick="deleteSurvey('${survey.id}')" class="btn btn-danger btn-sm">
+                             Xóa
+                        </button>
+                        ${survey.status === 'pending' ? `
+                            <button onclick="startSurvey('${survey.id}')" class="btn btn-secondary btn-sm">
+                                ▶ Bắt đầu
+                            </button>
+                        ` : ''}
+                        ${survey.status === 'active' ? `
+                            <button onclick="completeSurvey('${survey.id}')" class="btn btn-secondary btn-sm">
+                                ✅ Hoàn thành
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
 
-        // Handle delete buttons
-        document.querySelectorAll('.data-table .btn-danger').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const row = e.target.closest('tr');
-                const surveyName = row.querySelector('td:nth-child(2)').textContent;
-                
-                // Store the row reference for deletion
-                deleteModal.dataset.targetRow = row.rowIndex;
-                deleteModal.style.display = 'block';
-            });
-        });
-
-        // Handle confirm delete
-        document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
-            const rowIndex = deleteModal.dataset.targetRow;
-            if (rowIndex) {
-                // Here you would typically send delete request to backend
-                console.log('Deleting survey at row:', rowIndex);
-                
-                // Remove row from table (in real app, refresh data from server)
-                document.querySelector(`#surveysTable tbody tr:nth-child(${rowIndex})`).remove();
-                
-                deleteModal.style.display = 'none';
-                alert('Survey đã được xóa thành công!');
-            }
-        });
-
-        // Search functionality
-        document.getElementById('searchInput').addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase();
-            const rows = document.querySelectorAll('#surveysTable tbody tr');
-            
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchTerm) ? '' : 'none';
-            });
-        });
-
-        // Filter functionality
-        document.querySelector('.filter-controls .btn-primary').addEventListener('click', () => {
-            const timeFilter = document.getElementById('timeFilter').value;
+        // Filter surveys
+        function filterSurveys() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const statusFilter = document.getElementById('statusFilter').value;
-            const areaFilter = document.getElementById('areaFilter').value;
-            
-            console.log('Applying filters:', {
-                time: timeFilter,
-                status: statusFilter,
-                area: areaFilter
+            const teamFilter = document.getElementById('teamFilter').value;
+
+            filteredSurveys = surveys.filter(survey => {
+                const matchesSearch = survey.name.toLowerCase().includes(searchTerm) ||
+                                    survey.description.toLowerCase().includes(searchTerm) ||
+                                    survey.assignedTo.toLowerCase().includes(searchTerm);
+                const matchesStatus = !statusFilter || survey.status === statusFilter;
+                const matchesTeam = !teamFilter || survey.teamId === teamFilter;
+
+                return matchesSearch && matchesStatus && matchesTeam;
             });
+
+            renderSurveys();
+        }
+
+        // Update statistics
+        
+        // Get status text
+        function getStatusText(status) {
+            switch (status) {
+                case 'pending':
+                    return 'Chờ thực hiện';
+                case 'active':
+                    return 'Đang thực hiện';    
+                case 'completed':
+                    return 'Đã hoàn thành';
+                case 'cancelled':
+                    return 'Đã hủy';
+                default:
+                    return 'Không xác định';
+            }
+        }
+
+        // Get priority text
+        function getPriorityText(priority) {
+            switch (priority) {
+                case 'low':
+                    return 'Thấp';
+                case 'medium':
+                    return 'Trung bình';
+                case 'high':
+                    return 'Cao';
+                default:
+                    return 'Không xác định';
+            }
+        }
+        // Format date and time
+        function formatDateTime(dateTime) {
+            const date = new Date(dateTime);
+            const options = {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            };
+            return date.toLocaleString('vi-VN', options);
+        }
+
+        // Create survey
+        function createSurvey() {
+            editingId = null;
+            document.getElementById('surveyForm').reset();
+        }
+
+        // View survey details
+        function viewSurvey(surveyId) {
+            const survey = surveys.find(s => s.id === surveyId);
+            if (survey) {
+                document.getElementById('surveyDetails').innerHTML = `
+                    <h3>${survey.name}</h3>
+                    <p>${survey.description}</p>
+                    <p><strong>Trạng thái:</strong> ${getStatusText(survey.status)}</p>
+                    <p><strong>Độ ưu tiên:</strong> ${getPriorityText(survey.priority)}</p>
+                    <p><strong>Ngày tạo:</strong> ${formatDateTime(survey.createdAt)}</p>
+                `;
+            }
+        }
+
+        // Edit survey
+        function editSurvey(surveyId) {
+            const survey = surveys.find(s => s.id === surveyId);
+            if (survey) {
+                document.getElementById('surveyForm').elements['name'].value = survey.name;
+                document.getElementById('surveyForm').elements['description'].value = survey.description;
+                document.getElementById('surveyForm').elements['status'].value = survey.status;
+                document.getElementById('surveyForm').elements['priority'].value = survey.priority;
+                editingId = surveyId;
+            }
+        }
+        // Delete survey
+        function deleteSurvey(surveyId) {
+            surveys = surveys.filter(s => s.id !== surveyId);
+            updateStats();
+        }
+
+        // Start survey
+        function startSurvey(surveyId) {
+            const survey = surveys.find(s => s.id === surveyId);
+            if (survey) {
+                survey.status = 'active';
+                updateStats();
+            }
+        }
+
+        // Complete survey
+        function completeSurvey(surveyId) {
+            const survey = surveys.find(s => s.id === surveyId);
+            if (survey) {
+                survey.status = 'completed';
+                updateStats();
+            }
+        }
+
+        // Export reports
+        function exportReports() {
+            const reportData = surveys.map(s => ({
+                id: s.id,
+                name: s.name,
+                status: getStatusText(s.status),
+                priority: getPriorityText(s.priority),
+                createdAt: formatDateTime(s.createdAt)
+            }));
+            const csvContent = "data:text/csv;charset=utf-8," + reportData.map(e => Object.values(e).join(",")).join("\n");
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "survey_reports.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.innerText = message;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.remove();
+            }, 3005);
+        }
+        // Close modal
+        function closeModal() {
+            document.getElementById('surveyModal').style.display = 'none';
+            document.getElementById('surveyForm').reset();
+            editingId = null;
+        }
+        // Handle form submission
+        document.getElementById('surveyForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const form = event.target;
+            const name = form.elements['name'].value;
+            const description = form.elements['description'].value;
+            const status = form.elements['status'].value;
+            const priority = form.elements['priority'].value;
+
+            if (editingId) {
+                const surveyIndex = surveys.findIndex(s => s.id === editingId);
+                if (surveyIndex !== -1) {
+                    surveys[surveyIndex].name = name;
+                    surveys[surveyIndex].description = description;
+                    surveys[surveyIndex].status = status;
+                    surveys[surveyIndex].priority = priority;
+                }
+            } else {
+                const newSurvey = {
+                    id: Date.now(),
+                    name,
+                    description,
+                    status,
+                    priority,
+                    createdAt: new Date()
+                };
+                surveys.push(newSurvey);
+            }
+            updateStats();
+            closeModal();
         });
-        // Logout functionality
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            // Here you would typically clear session data and redirect to login page
-            alert('Đã đăng xuất thành công!');
-            window.location.href = 'login.html'; // Redirect to login page
+        // Show modal
+        function showModal() {
+            document.getElementById('surveyModal').style.display = 'block';
+        }
+        // Close modal on outside click
+        window.onclick = function(event) {
+            if (event.target === document.getElementById('surveyModal')) {
+                closeModal();
+            }
+        };
+        // Close modal on escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
         });
     </script>
+</body>
+</html>
