@@ -523,6 +523,8 @@
             100% { opacity: 1; }
         }
     </style>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
     <div class="main-container">
@@ -736,7 +738,7 @@
                         </div>
                     </div>
                 </div>
-            </div>-->
+            </div>
 
             <div class="control-panel">
                 <!--<div class="control-sections">
@@ -797,6 +799,7 @@
     </div>
 
     <script>
+    document.addEventListener('DOMContentLoaded', function() {
         function emergencyAlert() {
             alert("🚨 Cảnh báo khẩn cấp đã được kích hoạt! Đội cứu hộ sẽ được thông báo ngay lập tức.");
         }
@@ -836,6 +839,82 @@
         function openSystemSettings() {
             alert("⚙️ Mở cài đặt hệ thống.");
         }
+
+        // Thêm sự kiện click cho drone-item
+        const droneItems = document.querySelectorAll('.drone-item');
+        droneItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const droneId = this.getAttribute('data-drone');
+                showDroneDetail(droneId);
+            });
+        });
+
+        function showDroneDetail(droneId) {
+            document.querySelector('.main-container').style.display = 'none';
+            const oldDetail = document.getElementById('droneDetailView');
+            if (oldDetail) oldDetail.remove();
+            // Dữ liệu mẫu lịch sử phát hiện swimmer
+            const detectionHistory = [
+              { time: '10:25', drone: droneId, result: { "class": "boat", "confidence": 0.95, "bbox": [3243.88,229.24,3534.11,600.76] } },
+              { time: '10:25', drone: droneId, result: { "class": "swimmer", "confidence": 0.78, "bbox": [1576.49,1182.46,1666.07,1268.16] } },
+              { time: '10:25', drone: droneId, result: { "class": "swimmer", "confidence": 0.78, "bbox": [1607.58,1050.05,1711.14,1125.10] } },
+              { time: '10:25', drone: droneId, result: { "class": "swimmer", "confidence": 0.72, "bbox": [1594.18,570.60,1663.05,665.14] } }
+            ];
+            const historyHtml = detectionHistory.map(item =>
+              `<div style='font-size:13px;color:#333;margin-bottom:10px;'><b>${item.time} - Drone 0${item.drone}:</b><br><pre style='background:#f8fafd;padding:8px 10px;border-radius:8px;font-size:12px;overflow-x:auto;'>${JSON.stringify(item.result, null, 2)}</pre></div>`
+            ).join('');
+            const container = document.createElement('div');
+            container.id = 'droneDetailView';
+            container.style.display = 'flex';
+            container.style.height = '100vh';
+            container.style.width = '100vw';
+            container.style.position = 'fixed';
+            container.style.left = '0';
+            container.style.top = '0';
+            container.style.zIndex = '9999';
+            container.style.background = 'linear-gradient(135deg, #0f4c75 0%, #3282b8 50%, #bbe1fa 100%)';
+            container.innerHTML = `
+              <div style="flex:0.9; background:rgba(244,67,54,0.07); padding:32px 18px 32px 18px; min-width:260px; max-width:340px; display:flex; flex-direction:column;">
+                <button onclick="closeDroneDetail()" style="margin-bottom:18px;align-self:flex-start;padding:7px 18px;border-radius:20px;border:none;background:#1976d2;color:#fff;font-weight:600;cursor:pointer;">← Quay lại</button>
+                <h3 style="color:#f44336;margin-bottom:12px;">Lịch sử phát hiện swimmer</h3>
+                <div id="swimmerHistory" style="flex:1;overflow-y:auto;background:#fff;border-radius:10px;padding:12px 10px;box-shadow:0 2px 8px #0001;">
+                  ${historyHtml}
+                </div>
+              </div>
+              <div style="flex:2.2;display:flex;align-items:center;justify-content:center;background:rgba(15,76,117,0.13);">
+                <div style="width:90%;max-width:700px;background:#fff;border-radius:18px;box-shadow:0 4px 32px #0002;padding:24px 0;display:flex;flex-direction:column;align-items:center;">
+                  <h2 style='margin-bottom:18px;color:#1976d2;'>Drone 0${droneId} - Live Stream</h2>
+                  <video width="95%" height="420" style="border-radius:12px;box-shadow:0 2px 12px #0002;object-fit:cover;" controls autoplay loop muted>
+                    <source src="https://res.cloudinary.com/dntu2oyta/video/upload/v1750083180/beach_detection/epqd9ccsbol790jsjuoh.mp4" type="video/mp4">
+                    Live stream không khả dụng
+                  </video>
+                </div>
+              </div>
+              <div style="flex:1.2;min-width:340px;max-width:440px;background:#e3f2fd;padding:32px 18px;display:flex;flex-direction:column;align-items:center;">
+                <h3 style='color:#1976d2;margin-bottom:12px;'>Bản đồ vị trí Drone</h3>
+                <div id="droneMap" style="width:100%;height:340px;background:#fff;border-radius:12px;box-shadow:0 2px 8px #0001;display:flex;align-items:center;justify-content:center;color:#1976d2;font-size:18px;"></div>
+              </div>
+            `;
+            document.body.appendChild(container);
+            // Thêm bản đồ thực tế bằng Leaflet
+            setTimeout(() => {
+              if (window.L) {
+                const map = L.map('droneMap').setView([12.238, 109.196], 13); // Vị trí mẫu Nha Trang
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                  attribution: '© OpenStreetMap contributors'
+                }).addTo(map);
+                L.marker([12.238, 109.196]).addTo(map).bindPopup('Drone 0' + droneId).openPopup();
+              } else {
+                document.getElementById('droneMap').innerHTML = '<span style="color:#888">Không tải được bản đồ</span>';
+              }
+            }, 200);
+        }
+        function closeDroneDetail() {
+            const detail = document.getElementById('droneDetailView');
+            if (detail) detail.remove();
+            document.querySelector('.main-container').style.display = '';
+        }
+    });
     </script>
 </body>
 </html>

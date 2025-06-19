@@ -231,16 +231,16 @@ app.get('/api/User', async (req, res) => {
     res.json(Users);
 });
 app.post('/api/User', async (req, res) => {
-    const User = new User(req.body);
-    await User.save();
-    res.json(User);
+    const user = new User(req.body);
+    await user.save();
+    res.json(user);
 });
 app.put('/api/User/:id', async (req, res) => {
-    const User = await User.findOneAndUpdate({ User_id: req.params.id }, req.body, { new: true });
-    res.json(User);
+    const user = await User.findOneAndUpdate({ user_id: req.params.id }, req.body, { new: true });
+    res.json(user);
 });
 app.delete('/api/User/:id', async (req, res) => {
-    await User.deleteOne({ User_id: req.params.id });
+    await User.deleteOne({ user_id: req.params.id });
     res.json({ success: true });
 });
 

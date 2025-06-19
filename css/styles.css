@@ -1098,4 +1098,37 @@ body {
   width: 100%;
 }
 
+.modal-overlay {
+    position: fixed !important;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.25);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+.modal-overlay[style*="display: flex"] {
+    display: flex !important;
+}
+.modal-content {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 4px 32px #0002;
+    padding: 2.2rem 2.5rem 1.5rem 2.5rem;
+    min-width: 340px;
+    max-width: 95vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+@media (max-width: 600px) {
+    .modal-content {
+        padding: 1rem 0.5rem;
+        min-width: 90vw;
+    }
+}
+
 

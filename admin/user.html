@@ -45,15 +45,18 @@
 
         <main class="main-content">
             <div class="team-info-container">
-                <div class="team-header-info" style="display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; margin-bottom: 1.5rem;">
-                    <div style="display: flex; align-items: center; gap: 1.5rem; width: 100%; justify-content: space-between;">
-                        <div class="team-status ${team.status}" style="display:inline-block;font-size:1.1rem;background:#e6f4ea;color:#1e7e34;padding:0.3rem 1.2rem;border-radius:14px;font-weight:600;min-width:110px;text-align:center;">
-                            ${team.status === 'active' ? 'Hoạt động' : 'Không hoạt động'}
-                        </div>
-                        <h1 style="font-size: 2.2rem; margin: 0; text-align:center; flex:1;">${team.team_name}</h1>
-                        <span style="font-size:1.1rem; min-width:120px; text-align:right;"><i class="fas fa-users"></i> ${members.length} thành viên</span>
+                <div class="team-header-info" style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem;">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <h1 id="teamName" style="font-size: 2.2rem; margin: 0; text-align:center;">Team Nha Trang Alpha</h1>
+                        <span id="teamStatus" class="team-status" style="background:#e6f4ea;color:#1e7e34;padding:0.3rem 1.2rem;border-radius:14px;font-weight:600;font-size:1rem;margin-left:0.5rem;">Hoạt động</span>
                     </div>
-                    <button class="btn btn-primary" id="addMemberBtn" style="margin-left:1.5rem;"><i class="fas fa-plus"></i> Thêm thành viên</button>
+                    <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 900px; margin-top: 0.5rem;">
+                        <span id="memberCount" style="font-size:1.1rem; color:#333;"><i class="fas fa-users"></i> 9 thành viên</span>
+                        <div style="display: flex; gap: 1rem;">
+                            <input type="text" id="searchMemberInput" placeholder="Tìm kiếm theo mã hoặc tên thành viên..." style="padding: 8px 16px; border-radius: 20px; border: 1px solid #1976d2; min-width: 260px;">
+                            <button class="btn btn-primary" id="addMemberBtn" style="margin-left:0;"><i class="fas fa-plus"></i> Thêm thành viên</button>
+                        </div>
+                    </div>
                 </div>
                 <div class="members-grid">
                     <!-- Danh sách thành viên sẽ được render ở đây -->
@@ -75,8 +78,8 @@
           <div class="form-group">
             <label>Vai trò</label>
             <select id="memberRole">
-              <option value="technical_monitor">Giám sát kỹ thuật</option>
-              <option value="rescuer">Nhân viên cứu hộ</option>
+              <option value="manager">Giám sát kỹ thuật</option>
+              <option value="member">Nhân viên cứu hộ</option>
             </select>
           </div>
           <div class="form-group">
@@ -111,23 +114,32 @@
     const urlParams = new URLSearchParams(window.location.search);
     const teamId = urlParams.get('team_id');
 
-    async function renderMembers() {
+    let allMembers = [];
+
+    async function renderMembers(keyword = '') {
         if (teamId) {
             // Lấy thông tin đội từ API
             const teamRes = await fetch(`http://localhost:3009/api/Team?team_id=${teamId}`);
             const teams = await teamRes.json();
             const team = Array.isArray(teams) ? teams[0] : teams;
-            const members = await fetchMembersByTeamId(teamId);
+            allMembers = await fetchMembersByTeamId(teamId);
+
+            // Lọc theo từ khóa nếu có
+            let members = allMembers;
+            if (keyword) {
+                const lower = keyword.toLowerCase();
+                members = allMembers.filter(m =>
+                    (m.user_id && m.user_id.toLowerCase().includes(lower)) ||
+                    (m.fullname && m.fullname.toLowerCase().includes(lower)) ||
+                    (m.name && m.name.toLowerCase().includes(lower))
+                );
+            }
 
             // Hiển thị thông tin đội
             const teamInfo = document.querySelector('.team-header-info');
-            teamInfo.innerHTML = `
-                <h1>${team.team_name}</h1>
-                <div class="team-status ${team.status}" style="display:inline-block;margin-bottom:0;font-size:1.1rem;background:#e6f4ea;color:#1e7e34;padding:0.3rem 1.2rem;border-radius:14px;font-weight:600;">
-                    ${team.status === 'active' ? 'Hoạt động' : 'Không hoạt động'}
-                </div>
-                <span style="font-size:1.1rem;"><i class="fas fa-users"></i> ${members.length} thành viên</span>
-            `;
+            document.getElementById('teamName').textContent = team.team_name;
+            document.getElementById('teamStatus').textContent = team.status === 'active' ? 'Hoạt động' : 'Không hoạt động';
+            document.getElementById('memberCount').innerHTML = `<i class="fas fa-users"></i> ${members.length} thành viên`;
 
             // Hiển thị danh sách thành viên
             const membersGrid = document.querySelector('.members-grid');
@@ -141,7 +153,7 @@
             }
         </div>
         <div class="member-info">
-            <h3>${member.fullname}</h3>
+            <h3>${member.fullname || member.name}</h3>
             <span class="member-role ${member.role}">
                 ${member.role === 'technical_monitor' ? 'Giám sát kỹ thuật' : 'Nhân viên cứu hộ'}
             </span>
@@ -178,7 +190,7 @@
                 const users = await res.json();
                 const user = Array.isArray(users) ? users[0] : users;
                 document.getElementById('memberId').value = user.user_id;
-                document.getElementById('memberName').value = user.name;
+                document.getElementById('memberName').value = user.name || user.fullname;
                 document.getElementById('memberRole').value = user.role;
                 document.getElementById('memberPhone').value = user.phone;
                 document.getElementById('memberEmail').value = user.email;
@@ -244,6 +256,10 @@
     }
 
     renderMembers();
+
+    document.getElementById('searchMemberInput').addEventListener('input', function() {
+        renderMembers(this.value);
+    });
 </script>
     <script src="../js/auth.js"></script>
 </body>
