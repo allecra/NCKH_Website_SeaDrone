@@ -45,9 +45,15 @@
 
         <main class="main-content">
             <div class="team-info-container">
-                <div class="team-header-info">
-                    <!-- Thông tin đội sẽ được thêm vào đây -->
-                    <button class="btn btn-primary" id="addMemberBtn"><i class="fas fa-plus"></i> Thêm thành viên</button>
+                <div class="team-header-info" style="display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; margin-bottom: 1.5rem;">
+                    <div style="display: flex; align-items: center; gap: 1.5rem; width: 100%; justify-content: space-between;">
+                        <div class="team-status ${team.status}" style="display:inline-block;font-size:1.1rem;background:#e6f4ea;color:#1e7e34;padding:0.3rem 1.2rem;border-radius:14px;font-weight:600;min-width:110px;text-align:center;">
+                            ${team.status === 'active' ? 'Hoạt động' : 'Không hoạt động'}
+                        </div>
+                        <h1 style="font-size: 2.2rem; margin: 0; text-align:center; flex:1;">${team.team_name}</h1>
+                        <span style="font-size:1.1rem; min-width:120px; text-align:right;"><i class="fas fa-users"></i> ${members.length} thành viên</span>
+                    </div>
+                    <button class="btn btn-primary" id="addMemberBtn" style="margin-left:1.5rem;"><i class="fas fa-plus"></i> Thêm thành viên</button>
                 </div>
                 <div class="members-grid">
                     <!-- Danh sách thành viên sẽ được render ở đây -->
@@ -117,11 +123,10 @@
             const teamInfo = document.querySelector('.team-header-info');
             teamInfo.innerHTML = `
                 <h1>${team.team_name}</h1>
-                <div class="team-status ${team.status}" style="display:inline-block;margin-bottom:1rem;">
+                <div class="team-status ${team.status}" style="display:inline-block;margin-bottom:0;font-size:1.1rem;background:#e6f4ea;color:#1e7e34;padding:0.3rem 1.2rem;border-radius:14px;font-weight:600;">
                     ${team.status === 'active' ? 'Hoạt động' : 'Không hoạt động'}
                 </div>
-                <span><i class="fas fa-users"></i> ${members.length} thành viên</span>
-                <button class="btn btn-primary" id="addMemberBtn"><i class="fas fa-plus"></i> Thêm thành viên</button>
+                <span style="font-size:1.1rem;"><i class="fas fa-users"></i> ${members.length} thành viên</span>
             `;
 
             // Hiển thị danh sách thành viên
@@ -151,7 +156,7 @@
                 <a href="mailto:${member.email}">${member.email}</a>
             </div>
         </div>
-        <div class="member-actions">
+        <div class="member-actions" style="display:flex;gap:0.7rem;justify-content:center;margin-top:1.2rem;">
             <button class="btn btn-primary btn-small" onclick="openModal('memberModal', 'edit', '${member.user_id}')"><i class="fas fa-edit"></i></button>
             <button class="btn btn-danger btn-small" onclick="openModal('deleteMemberModal', 'delete', '${member.user_id}')"><i class="fas fa-trash"></i></button>
         </div>

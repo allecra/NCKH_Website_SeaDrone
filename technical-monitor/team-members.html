@@ -108,7 +108,7 @@
     async function renderMembers() {
         if (teamId) {
             // Lấy thông tin đội từ API
-            const teamRes = await fetch(`http://localhost:3005/api/Team?team_id=${teamId}`);
+            const teamRes = await fetch(`http://localhost:3009/api/Team?team_id=${teamId}`);
             const teams = await teamRes.json();
             const team = Array.isArray(teams) ? teams[0] : teams;
             const members = await fetchMembersByTeamId(teamId);
@@ -180,7 +180,7 @@
             if(mode === 'edit') {
                 title.textContent = 'Sửa thành viên';
                 // Lấy dữ liệu User từ API
-                const res = await fetch(`http://localhost:3005/api/User?user_id=${id}`);
+                const res = await fetch(`http://localhost:3009/api/User?user_id=${id}`);
                 const users = await res.json();
                 const user = Array.isArray(users) ? users[0] : users;
                 document.getElementById('memberId').value = user.user_id;
@@ -196,7 +196,7 @@
         }
         if(modalId === 'deleteMemberModal') {
             document.getElementById('confirmDeleteMemberBtn').onclick = async function() {
-                await fetch(`http://localhost:3005/api/User/${id}`, { method: 'DELETE' });
+                await fetch(`http://localhost:3009/api/User/${id}`, { method: 'DELETE' });
                 closeModal('deleteMemberModal');
                 renderMembers();
             };
@@ -219,14 +219,14 @@
         const email = document.getElementById('memberEmail').value;
         if(id) {
             // Sửa
-            await fetch(`http://localhost:3005/api/User/${id}`, {
+            await fetch(`http://localhost:3009/api/User/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name: name, role, phone, email, status: 'active' })
             });
         } else {
             // Thêm mới
-            await fetch('http://localhost:3005/api/User', {
+            await fetch('http://localhost:3009/api/User', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -245,7 +245,7 @@
     }
 
     async function fetchMembersByTeamId(teamId) {
-        const res = await fetch(`http://localhost:3005/api/User?team_id=${teamId}`);
+        const res = await fetch(`http://localhost:3009/api/User?team_id=${teamId}`);
         const data = await res.json();
         return Array.isArray(data) ? data : (data.data || []);
     }

@@ -620,20 +620,16 @@
         <!-- Statistics -->
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-number pending" id="pendingCount">12</div>
+                <div class="stat-number pending" id="pendingCount">1</div>
                 <div class="stat-label">Chờ thực hiện</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number active" id="activeCount">5</div>
+                <div class="stat-number active" id="activeCount">2</div>
                 <div class="stat-label">Đang thực hiện</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number completed" id="completedCount">28</div>
+                <div class="stat-number completed" id="completedCount">5</div>
                 <div class="stat-label">Hoàn thành</div>    
-            </div>
-            <div class="stat-card">
-                <div class="stat-number cancelled" id="cancelledCount">3</div>
-                <div class="stat-label">Đã hủy</div>
             </div>
         </div>
 
@@ -752,7 +748,7 @@
         // Hàm lấy dữ liệu khảo sát từ backend (giờ là Survey_Drone)
         async function fetchSurveys() {
             try {
-                const res = await fetch('http://localhost:3005/api/Survey_Drone');
+                const res = await fetch('http://localhost:3009/api/Survey_Drone');
                 const data = await res.json();
                 console.log('Survey_Drone API response:', data);
                 surveys = Array.isArray(data.data) ? data.data : (Array.isArray(data) ? data : []);
@@ -767,7 +763,7 @@
         // Hàm lấy dữ liệu Survey_Drone (nếu cần)
         async function fetchSurveyDrones() {
             try {
-                const res = await fetch('http://localhost:3005/api/Survey_Drone');
+                const res = await fetch('http://localhost:3009/api/Survey_Drone');
                 const data = await res.json();
                 // Xử lý data ở đây nếu cần liên kết với surveys
                 // Ví dụ: lưu vào biến toàn cục hoặc merge vào surveys
@@ -935,7 +931,7 @@
         async function deleteSurvey(id) {
             if (!confirm('Bạn có chắc muốn xóa báo cáo này?')) return;
             try {
-                const res = await fetch(`http://localhost:3005/api/Survey_Drone/${id}`, { method: 'DELETE' });
+                const res = await fetch(`http://localhost:3009/api/Survey_Drone/${id}`, { method: 'DELETE' });
                 const data = await res.json();
                 if (data.success) {
                     showToast('Đã xóa báo cáo!');
@@ -992,7 +988,7 @@
             document.body.appendChild(toast);
             setTimeout(() => {
                 toast.remove();
-            }, 3005);
+            }, 3009);
         }
         // Close modal
         function closeModal() {
@@ -1014,13 +1010,13 @@
             try {
                 let res, data;
                 if (editingSurvey && editingSurvey._id) {
-                    res = await fetch(`http://localhost:3005/api/Survey_Drone/${editingSurvey._id}`, {
+                    res = await fetch(`http://localhost:3009/api/Survey_Drone/${editingSurvey._id}`, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(surveyData)
                     });
                 } else {
-                    res = await fetch('http://localhost:3005/api/Survey_Drone', {
+                    res = await fetch('http://localhost:3009/api/Survey_Drone', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(surveyData)
@@ -1073,7 +1069,7 @@
         }
 
         async function fetchMembersByTeamId(teamId) {
-            const res = await fetch(`http://localhost:3005/api/User?team_id=${teamId}`);
+            const res = await fetch(`http://localhost:3009/api/User?team_id=${teamId}`);
             const data = await res.json();
             return Array.isArray(data) ? data : (data.data || []);
         }

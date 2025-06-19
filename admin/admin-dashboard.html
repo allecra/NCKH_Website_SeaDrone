@@ -21,21 +21,7 @@
         .beach-item:hover {
             background: #f0f4ff;
         }
-        .beach-card {
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px #0001;
-            padding: 1.2rem 1rem;
-            width: 270px;
-            display: flex;
-            flex-direction: column;
-            gap: 0.7rem;
-            position: relative;
-            transition: box-shadow 0.2s;
-        }
-        .beach-card:hover {
-            box-shadow: 0 4px 16px #0002;
-        }
+
         .beach-actions {
             position: absolute;
             top: 10px;
@@ -62,7 +48,7 @@
     </style>
 </head>
 <body>
-    <div class="app-container">
+    <div class="app-container" style="display: flex; flex-direction: column; min-height: 100vh;">
         <header class="app-header">
             <div class="header-left">
                 <div class="logo">
@@ -70,7 +56,7 @@
                     <span>Hệ thống quản lý cứu hộ</span>
                 </div>
             </div>
-            <div class="header-right">
+            <div class="header-right" style="display: flex; align-items: center; gap: 1rem;">
                 <div class="user-info">
                     <i class="fas fa-user-circle user-icon"></i>
                     <span class="user-name">Admin</span>
@@ -88,54 +74,66 @@
                     <div class="location-info">
                         <i class="fas fa-map-marker-alt"></i>
                         <span>Quản lý bãi biển</span>
-            </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <main class="main-content">
-        <div class="dashboard-grid">
-                <section class="map-section">
-                    <div class="section-header">
-                        <div>
-                            <h2>Bản đồ bãi biển</h2>
-                            <p>Xem vị trí các bãi biển và đội cứu hộ</p>
-            </div>
+        <main class="main-content" style="display: flex; gap: 2rem; align-items: flex-start;">
+            <section class="map-section" style="flex: 1; min-width: 400px; position: relative;">
+                <div class="section-header">
+                    <div>
+                        <h2>Bản đồ bãi biển</h2>
+                        <p>Xem vị trí các bãi biển và đội cứu hộ</p>
                     </div>
-                    <div class="map-container">
-                        <div id="overviewMap"></div>
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="Tìm kiếm tên bãi biển...">
+                        <button class="btn btn-primary" id="searchBtn"><i class="fas fa-search"></i></button>
                     </div>
-                </section>
-
-                <section class="list-section">
-                    <div class="section-header" style="align-items: center; justify-content: space-between;">
-                        <div>
-                            <h2>Danh sách bãi biển</h2>
-                            <p>Quản lý thông tin các bãi biển</p>
-                        </div>
-                        <div style="display: flex; gap: 1rem; align-items: center;">
-                            
-                            <button class="btn btn-primary" id="addBeachBtn"><i class="fas fa-plus"></i> Thêm bãi biển</button>
-                            
-                        </div>
-                    </div>
-                    <div class="beach-list" style="display: flex; flex-wrap: wrap; gap: 1rem;">
-                        <!-- Danh sách bãi biển sẽ được thêm vào đây -->
                 </div>
-                </section>
-            </div>
+                <div class="map-container">
+                    <div id="overviewMap"></div>
+                </div>
+            </section>
+
+            <section class="list-section" style="flex: 1.2; min-width: 350px; max-height: 90vh; overflow-y: auto;">
+                <div class="section-header" style="align-items: center; justify-content: space-between;">
+                    <div>
+                        <h2>Danh sách bãi biển</h2>
+                        <p>Quản lý thông tin các bãi biển</p>
+                    </div>
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <button class="btn btn-primary" id="addBeachBtn"><i class="fas fa-plus"></i> Thêm bãi biển</button>
+                    </div>
+                </div>
+                <div class="beach-list">
+                    <!-- Danh sách bãi biển sẽ được thêm vào đây -->
+                </div>
+            </section>
         </main>
-        </div>
+    </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
+let allBeaches = [];
 async function fetchBeaches() {
     const res = await fetch('http://localhost:3009/api/Beach');
-    return await res.json();
+    allBeaches = await res.json();
+    return allBeaches;
 }
-
-async function renderBeaches() {
-    const beaches = await fetchBeaches();
+function filterBeaches(keyword) {
+    if (!keyword) return allBeaches;
+    return allBeaches.filter(b => b.beach_name.toLowerCase().includes(keyword.toLowerCase()));
+}
+document.getElementById('searchBtn').onclick = function() {
+    const keyword = document.getElementById('searchInput').value;
+    renderBeaches(keyword);
+};
+document.getElementById('searchInput').onkeyup = function(e) {
+    if (e.key === 'Enter') document.getElementById('searchBtn').click();
+};
+async function renderBeaches(keyword = '') {
+    const beaches = filterBeaches(keyword);
     const beachList = document.querySelector('.beach-list');
     beachList.innerHTML = beaches.map(beach => `
         <div class="beach-card" data-beach-id="${beach.beach_id}">
@@ -234,42 +232,8 @@ function closeModal(modalId) {
 }
 
 // Thêm/Sửa bãi biển
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('addBeachBtn').onclick = () => openModal('beachModal', 'add');
-    document.getElementById('beachForm').onsubmit = async function(e) {
-        e.preventDefault();
-        const id = document.getElementById('beachId').value;
-        const name = document.getElementById('beachName').value;
-        const managerId = document.getElementById('managerId').value;
-        const lat = parseFloat(document.getElementById('lat').value);
-        const lng = parseFloat(document.getElementById('lng').value);
-        if(id) {
-            // Sửa
-            await fetch(`http://localhost:3009/api/Beach/${id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    beach_name: name,
-                    manager_id: managerId,
-                    location: { lat, lng }
-                })
-            });
-        } else {
-            // Thêm
-            await fetch('http://localhost:3009/api/Beach', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    beach_id: 'B' + Date.now(),
-                    beach_name: name,
-                    manager_id: managerId,
-                    location: { lat, lng }
-                })
-            });
-        }
-        closeModal('beachModal');
-        renderBeaches();
-    };
+document.addEventListener('DOMContentLoaded', async () => {
+    await fetchBeaches();
     renderBeaches();
 });
     </script>

@@ -27,12 +27,6 @@ body {
     100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
 }
 
-<<<<<<< HEAD
-@keyframes gradientText {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-=======
 /* Layout */
 .app-container {
   display: flex;
@@ -41,7 +35,6 @@ body {
   max-width: 1400px;
   width: 100%;
   margin: 0 auto;
->>>>>>> admin
 }
 
 /* Container */
@@ -87,20 +80,10 @@ body {
     z-index: 1;
 }
 
-<<<<<<< HEAD
 .header-subtitle {
     color: #666;
     font-size: 1.1rem;
     margin-bottom: 20px;
-=======
-.main-content {
-  max-width: 1400px;
-  width: 100%;
-  margin: 0 auto;
-  padding: 2.5rem 2rem;
-  display: flex;
-  justify-content: center;
->>>>>>> admin
 }
 
 /* Button styles */
@@ -297,11 +280,11 @@ body {
     color: #667eea;
 }
 
-<<<<<<< HEAD
 .demo-account {
     margin-bottom: 5px;
     color: #666;
-=======
+}
+
 /* Admin Dashboard Styles */
 .admin-header {
   background: white;
@@ -348,23 +331,6 @@ body {
   font-size: 18px;
   color: #333;
   margin-bottom: 16px;
-}
-
-.beach-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  max-width: 1200px;
-  width: 100%;
-  margin: 0 auto;
-}
-
-.beach-card {
-  flex: 1 1 320px;      /* co giãn, min 320px */
-  max-width: 380px;     /* không quá rộng */
-  min-width: 300px;
-  box-sizing: border-box;
-  margin-bottom: 0;
 }
 
 .add-beach-btn {
@@ -481,7 +447,7 @@ body {
 }
 
 .section-header {
-  padding: 1.5rem;
+  padding: 1rem;
   border-bottom: 1px solid var(--border-color);
   display: flex;
   justify-content: space-between;
@@ -566,15 +532,8 @@ body {
   max-width: 600px;
   /* Thêm chiều cao tối đa phù hợp màn hình */
   max-height: 650px;
-}
-
-.beach-list {
-  flex: 1;
-  overflow-y: auto;
-  padding: 1rem;
-  /* Đảm bảo không kéo dài trang */
-  max-height: 550px;
-  min-height: 200px;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
 }
 
 /* Beach Description */
@@ -949,5 +908,194 @@ body {
   margin-bottom: 0.3rem;
   text-align: center;
   color: #222;
->>>>>>> admin
 }
+
+/* Layout 2 cột cho admin-dashboard */
+.main-content {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+.map-section {
+  flex: 1;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px #0001;
+  padding: 1rem 1.5rem;
+  min-width: 400px;
+}
+.list-section {
+  flex: 1.2;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px #0001;
+  padding: 2rem 1.5rem;
+  min-width: 350px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.beach-card:hover {
+  background: #eaf2ff;
+  box-shadow: 0 4px 16px #0002;
+}
+.beach-actions {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 0.5rem;
+}
+.app-header {
+  background: #1976d2;
+  color: #fff;
+  padding: 1.2rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 0 0 16px 16px;
+  margin-bottom: 1.5rem;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+.logo-icon {
+  font-size: 2rem;
+}
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.1rem;
+}
+.logout-btn {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 0.45rem 1.1rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-left: 1rem;
+  transition: background 0.2s, color 0.2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+.logout-btn:hover {
+  background: #1251a3;
+  color: #fff;
+}
+.btn, .btn-primary {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 0.45rem 1.1rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+.btn:hover, .btn-primary:hover {
+  background: #1251a3;
+  color: #fff;
+}
+.btn-danger {
+  background: #dc3545;
+  color: #fff;
+  border-radius: 20px;
+}
+
+.search-box {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  position: absolute;
+  top: 1.5rem;
+  right: 2rem;
+}
+#searchInput {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  border: 1px solid #1976d2;
+  outline: none;
+  font-size: 1rem;
+  min-width: 200px;
+}
+#searchInput:focus {
+  border-color: #1251a3;
+  box-shadow: 0 0 0 2px #1976d233;
+}
+#searchBtn {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 0.45rem 1.1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+#searchBtn:hover {
+  background: #1251a3;
+}
+@media (max-width: 1100px) {
+  .main-content {
+    flex-direction: column;
+  }
+  .map-section, .list-section {
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+  }
+  .search-box {
+    position: static;
+    margin-top: 1rem;
+    right: unset;
+    top: unset;
+  }
+}
+
+
+.beach-card {
+    width: 100%;
+    box-sizing: border-box;
+    background: #f8fafd;
+    border-radius: 12px;
+    box-shadow: 0 1px 4px #0001;
+    padding: 1.2rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    position: relative;
+    transition: box-shadow 0.2s, background 0.2s;
+  }
+
+  
+.beach-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  max-height: 70vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: 100%;
+}
+
+
