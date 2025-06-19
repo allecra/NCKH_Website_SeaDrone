@@ -8,7 +8,10 @@ document.addEventListener("DOMContentLoaded", () => {
       e.preventDefault();
       const username = document.getElementById('username').value;
       const password = document.getElementById('password').value;
+<<<<<<< HEAD
       const accountType = document.getElementById('accountType').value;
+=======
+>>>>>>> admin
 
       // Nếu là tài khoản tester thì chuyển hướng sang web API cổng 5008
       if (username === 'tester' && password === 'test123') {
@@ -16,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
+<<<<<<< HEAD
       //if (username === 'team_nt_alpha' && password === 'team123') {
        // window.location.href = 'http://localhost:3005';
        // return;
@@ -43,6 +47,16 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
           window.location.href = `../technical-monitor/dashboard.html`;
         }
+=======
+      const res = await fetch("http://localhost:3009/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        window.location.href = "../admin/admin-dashboard.html";
+>>>>>>> admin
       } else {
         alert(data.message || "Đăng nhập thất bại!");
       }
@@ -90,6 +104,12 @@ function checkAuth() {
   const currentPath = window.location.pathname
   if (userRole === "admin" && currentPath.includes("/technical-monitor/")) {
     window.location.href = "../admin/admin-dashboard.html"
+<<<<<<< HEAD
+=======
+    return false
+  } else if (userRole === "technical_monitor" && currentPath.includes("/admin/")) {
+    window.location.href = "../technical-monitor/dashboard.html"
+>>>>>>> admin
     return false
   } else if ((userRole === "technical_monitor" || userRole === "monitor") && currentPath.includes("/admin/")) {
     window.location.href = `../technical-monitor/team-members.html?team_id=${teamId}`;

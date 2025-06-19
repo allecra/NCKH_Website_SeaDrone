@@ -66,16 +66,22 @@ const TeamSchema = new mongoose.Schema({
 const UserSchema = new mongoose.Schema({
     user_id: String,
     team_id: String,
+<<<<<<< HEAD
     fullname: String,
     role: {
         type: String,
         enum: ['admin', 'manager', 'member'],
         default: 'member'
     },
+=======
+    fullname: String, // <-- Đúng là fullname
+    role: String,
+>>>>>>> admin
     phone: String,
     email: String,
     address: String,
     avatar: String,
+<<<<<<< HEAD
     status: {
         type: String,
         enum: ['active', 'inactive'],
@@ -89,6 +95,9 @@ const UserSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     }
+=======
+    status: String
+>>>>>>> admin
 });
 
 const DroneSchema = new mongoose.Schema({
@@ -182,7 +191,80 @@ const errorHandler = (err, req, res, next) => {
 };
 
 // API cho bãi biển
+<<<<<<< HEAD
 app.get('/api/beaches', async (req, res, next) => {
+=======
+app.get('/api/Beach', async (req, res) => {
+    const beaches = await Beach.find();
+    res.json(beaches);
+});
+app.post('/api/Beach', async (req, res) => {
+    const beach = new Beach(req.body);
+    await beach.save();
+    res.json(beach);
+});
+app.put('/api/Beach/:id', async (req, res) => {
+    const beach = await Beach.findOneAndUpdate({ beach_id: req.params.id }, req.body, { new: true });
+    res.json(beach);
+});
+app.delete('/api/Beach/:id', async (req, res) => {
+    await Beach.deleteOne({ beach_id: req.params.id });
+    res.json({ success: true });
+});
+
+// API cho team
+app.get('/api/Team', async (req, res) => {
+    const { beach_id } = req.query;
+    let teams;
+    if (beach_id) {
+        teams = await Team.find({ beach_id });
+    } else {
+        teams = await Team.find();
+    }
+    res.json(teams);
+});
+app.post('/api/Team', async (req, res) => {
+    const team = new Team(req.body);
+    await team.save();
+    res.json(team);
+});
+app.put('/api/Team/:id', async (req, res) => {
+    const team = await Team.findOneAndUpdate({ team_id: req.params.id }, req.body, { new: true });
+    res.json(team);
+});
+app.delete('/api/Team/:id', async (req, res) => {
+    await Team.deleteOne({ team_id: req.params.id });
+    res.json({ success: true });
+});
+
+// API cho User
+app.get('/api/User', async (req, res) => {
+    const { team_id } = req.query;
+    let users;
+    if (team_id) {
+        users = await User.find({ team_id });
+    } else {
+        users = await User.find();
+    }
+    res.json(users);
+});
+app.post('/api/User', async (req, res) => {
+    const user = new User(req.body);
+    await user.save();
+    res.json(user);
+});
+app.put('/api/User/:id', async (req, res) => {
+    const user = await User.findOneAndUpdate({ user_id: req.params.id }, req.body, { new: true });
+    res.json(user); // Trả về user đã sửa
+});
+app.delete('/api/User/:id', async (req, res) => {
+    await User.deleteOne({ User_id: req.params.id });
+    res.json({ success: true });
+});
+
+// Route test kết nối MongoDB và trích xuất dữ liệu
+app.get('/api/test-mongo', async (req, res) => {
+>>>>>>> admin
     try {
         const beaches = await Beach.find();
         res.json({
@@ -194,6 +276,7 @@ app.get('/api/beaches', async (req, res, next) => {
     }
 });
 
+<<<<<<< HEAD
 app.post('/api/beaches', async (req, res, next) => {
     try {
         const beach = new Beach(req.body);
@@ -594,6 +677,22 @@ app.get('/api/Team', async (req, res) => {
 app.use(errorHandler);
 
 const PORT = 3005;
+=======
+app.post('/api/auth/login', (req, res) => {
+    const { username, password, accountType } = req.body;
+    // Ví dụ tài khoản cứng
+    if (
+        (username === 'admin' && password === 'admin123') ||
+        (username === 'team_nt_alpha' && password === 'team123')
+    ) {
+        // Lưu role vào localStorage ở FE nếu muốn
+        return res.json({ success: true, message: 'Đăng nhập thành công!', username, role: accountType });
+    }
+    res.status(401).json({ success: false, message: 'Sai thông tin đăng nhập!' });
+});
+
+const PORT = 3009;
+>>>>>>> admin
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
